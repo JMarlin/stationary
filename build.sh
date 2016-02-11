@@ -13,7 +13,7 @@ gcc -c -o cfg.o peops/cfg.c -m32
 gcc -c -o draw.o peops/draw.c -m32
 gcc -c -o DrawString.o peops/DrawString.c -m32 
 gcc -c -o fps.o peops/fps.c -m32
-gcc -c -o fpsewp.o  peops/fpsewp.c -I ./peops/fpse -m32
+#gcc -c -o fpsewp.o  peops/fpsewp.c -I ./peops/fpse -m32
 gcc -c -o gpu.o peops/gpu.c -m32
 nasm -o hq2x16.o -felf32 peops/hq2x16.asm -I ./peops/ -w-all
 nasm -o hq2x32.o -felf32 peops/hq2x32.asm -I ./peops/ -w-all
