@@ -6374,7 +6374,7 @@ if(iUseNoStretchBlt>=2)
 #else
      pDstR=(unsigned long *)(pDst-(ddx+dga2Fix));
 #endif
-     for(x=0;x<ddx2;x++) *((unsigned long*)pDst)++=*pDstR++;
+     for(x=0;x<ddx2;x++) *(((unsigned long*)pDst)++)=*pDstR++; //JMarlin: Modified from *((unsigned long*)pDst)++=*pDstR++;
     }
    else
     {
