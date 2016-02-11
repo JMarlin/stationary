@@ -7,6 +7,7 @@ int main(int argc, char* argv[]) {
 	GPUinit();
 	GPUopen(&disp, "Stationary", "./peops.cfg");
 	GPUdisplayText("You are now running Stationary");
-	while(1) updateDisplay();
+	updateDisplay();
+	while(1); 
 	return 1;
 }
