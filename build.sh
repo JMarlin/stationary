@@ -7,7 +7,7 @@ gcc -c -o stationary_test_main.o stationary_test_main.c -m32
 #-------------------------------------------------------------------------#
 # PEOPS COMPONENTS                                                        #
 #-------------------------------------------------------------------------#
-gcc -c `pkg-config --cflags gtk+-3.0` -o callbacks.o  peops/callbacks.c `pkg-config --libs gtk+-3.0` #-m32 
+gcc -c `pkg-config --cflags gtk+-3.0` -o callbacks.o  peops/callbacks.c `pkg-config --libs gtk+-3.0` -m32 
 gcc -c -o cfg.o peops/cfg.c -m32
 #gcc -c -o conf.o peops/conf.c #IGNORING GTK COMPONENT
 gcc -c -o draw.o peops/draw.c -m32
