@@ -6374,7 +6374,7 @@ if(iUseNoStretchBlt>=2)
 #else
      pDstR=(unsigned long *)(pDst-(ddx+dga2Fix));
 #endif
-     unsigned long* lpDst = (unsigned long*)pDst;
+     unsigned long* lpDst = (unsigned long*)pDst; //TODO: Make less ugly once we understand this better
      for(x=0;x<ddx2;x++) *lpDst++=*pDstR++; 
 	 pDst = (unsigned short*)lpDst;
     }
