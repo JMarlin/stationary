@@ -75,6 +75,7 @@
 #include <GL/glx.h>  
 #include <math.h> 
 #include <X11/cursorfont.h> 
+#include <X11/extensions/xf86vmode.h>
 
 #else 		//SDL render
 
