@@ -34,7 +34,7 @@
 #include "stdafx.h"
 #include <stdio.h>
 //#include <direct.h>
-#include <vfw.h>
+//#include <vfw.h>
 #include <math.h>
 #include "externals.h"
 #include "record.h"
