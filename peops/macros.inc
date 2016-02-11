@@ -38,3 +38,22 @@
 
 %endif
 
+%macro pushad 0
+    push eax     
+    push ebx      
+    push ecx      
+    push edx      
+    push ebp      
+    push edi    
+    push esi      
+%endmacro
+
+%macro popad 0
+    pop esi 
+	pop edi
+	pop ebp
+	pop edx
+	pop ecx
+	pop ebx
+	pop eax    
+%endmacro
