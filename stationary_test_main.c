@@ -7,7 +7,6 @@ int main(int argc, char* argv[]) {
 	GPUinit();
 	GPUopen(&disp, "Stationary", "");
 	GPUdisplayText("You are now running Stationary");
-	updateDisplay();
-	while(1);
+	while(1) updateDisplay();
 	return 1;
 }
