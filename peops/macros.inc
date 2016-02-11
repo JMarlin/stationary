@@ -38,7 +38,7 @@
 
 %endif
 
-%macro pushad 0
+%macro PUSHAD 0
     push eax     
     push ebx      
     push ecx      
@@ -48,7 +48,7 @@
     push esi      
 %endmacro
 
-%macro popad 0
+%macro POPAD 0
     pop esi 
 	pop edi
 	pop ebp

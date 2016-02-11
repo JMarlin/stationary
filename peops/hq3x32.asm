@@ -383,7 +383,7 @@ Yres         equ 24
 NEWSYM hq3x_32
     push ebp
     mov ebp,esp
-    pushad
+    PUSHAD
 
     mov     esi,[ebp+inbuffer]
     mov     edi,[ebp+outbuffer]
