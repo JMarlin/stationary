@@ -418,7 +418,7 @@ Yres         equ 24
 NEWSYM hq3x_16
     push ebp
     mov ebp,esp
-    PUSHAD
+    pushad
 	
 
     mov     esi,[ebp+inbuffer]
