@@ -6,7 +6,6 @@ int main(int argc, char* argv[]) {
 	
 	GPUinit();
 	GPUopen(&disp, "Stationary", "");
-	iShowFPS = 1;
 	GPUdisplayText("You are now running Stationary");
 	updateDisplay();
 	while(1);
