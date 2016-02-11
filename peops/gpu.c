@@ -674,7 +674,6 @@ void updateDisplay(void)                               // UPDATE DISPLAY
 
  if(ulKeybits&KEY_SHOWFPS)                             // make fps display buf
   {
-   printf("Setting disp buf fps\n"); //DEBUG REMOVE
    sprintf(szDispBuf,"FPS %06.2f",fps_cur);
   }
 
