@@ -3,4 +3,4 @@ gcc -c -o cfg.o peops/cfg.c
 gcc -c -o draw.o peops/draw.c 
 gcc -c -o DrawString.o peops/DrawString.c 
 gcc -c -o fps.o peops/fps.c 
-gcc -c 
+gcc -c -o fpsewp.o  peops/fpsewp.c -I ./peops/fpse

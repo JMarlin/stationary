@@ -10,7 +10,9 @@
 typedef signed char        INT8;
 typedef signed short int   INT16;
 #ifndef _WINDOWS
+#ifndef __X11_C_ 
 typedef signed long int    INT32;
+#endif
 #endif
 
 typedef unsigned char      UINT8;
