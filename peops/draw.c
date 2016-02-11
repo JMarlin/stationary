@@ -7120,6 +7120,7 @@ SDL_FreeSurface(buf);
 #endif
    XPutImage(display,window,hGC, XFimage,
              0, 0, 0, 0, 230,15);
+   printf("Showing %s\n", szDispBuf);		 //DEBUG REMOVE
    XDrawString(display,window,hGC,2,13,szDispBuf,strlen(szDispBuf));
 #ifdef USE_DGA2
     }
