@@ -15,11 +15,11 @@ gcc -c -o DrawString.o peops/DrawString.c #-m32
 gcc -c -o fps.o peops/fps.c #-m32
 gcc -c -o fpsewp.o  peops/fpsewp.c -I ./peops/fpse #-m32
 gcc -c -o gpu.o peops/gpu.c #-m32
-nasm -o hq2x16.o -felf64 peops/hq2x16.asm -I ./peops/ 
-nasm -o hq2x32.o -felf64 peops/hq2x32.asm -I ./peops/ 
-nasm -o hq3x16.o -felf64 peops/hq3x16.asm -I ./peops/ 
-nasm -o hq3x32.o -felf64 peops/hq3x32.asm -I ./peops/ 
-nasm -o i386.o -felf64 peops/i386.asm -I ./peops/ 
+nasm -o hq2x16.o -felf64 peops/hq2x16.asm -I ./peops/ -W 
+nasm -o hq2x32.o -felf64 peops/hq2x32.asm -I ./peops/ -W 
+nasm -o hq3x16.o -felf64 peops/hq3x16.asm -I ./peops/ -W 
+nasm -o hq3x32.o -felf64 peops/hq3x32.asm -I ./peops/ -W 
+nasm -o i386.o -felf64 peops/i386.asm -I ./peops/ -W
 #gcc -c -o interface.o peops/interface.c #IGNORING GTK COMPONENT
 gcc -c -o key.o peops/key.c #-m32
 gcc -c -o menu.o peops/menu.c #-m32
