@@ -1,13 +1,54 @@
+#include <stdio.h>
 #include "peops/externals.h"
+
+#define GPU_DATA_CMD(c, o) ((((c)&0x7)<<5) | ((o)&0x1F))
+#define PRIM_POLY 0x01
+#define PRIM_LINE 0x02
+#define PRIM_SPRITE 0x04
+#define OPT_TGE 0x01
+#define OPT_ABE 0x02
+#define OPT_TME 0x04
+#define OPT_VTX 0x08
+#define OPT_IIP 0x10
+
+void S_draw_tri(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x2, unsigned short y2, unsigned char r, unsigned char g, unsigned char b) {
+    
+    //Poly, one color, flat shaded
+    GPUwriteData(
+        (GPU_DATA_CMD(PRIM_POLY, 0) << 24) |
+        b << 16 |
+        g << 8 |
+        r 
+    );
+    
+    //Vertex 1
+    GPUwriteData((y0 << 16) | x0);
+    
+    //Vertex 2
+    GPUwriteData((y1 << 16) | x1);
+    
+    //Vertex 3
+    GPUwriteData((y2 << 16) | x2);
+}
 
 int main(int argc, char* argv[]) {
 	
 	unsigned long disp;
+    unsigned long status;
 	
 	GPUinit();
 	GPUopen(&disp, "Stationary", "./peops.cfg");
 	GPUdisplayText("You are now running Stationary");
 	updateDisplay();
-	while(1); 
+	printf("You are now running stationary on display %lu\n", disp);
+    status = GPUreadStatus();
+    printf("The GPU has the following status: 0x%08lx\n", status);
+    //Enable GPU
+    GPUwriteStatus(0x03000000);
+    status = GPUreadStatus();
+    printf("The GPU has the following status: 0x%08lx\n", status);
+    S_draw_tri(0, 200, 100, 0, 200, 200, 0x7F, 0x00, 0x00);
+    updateDisplay();
+    while(1); 
 	return 1;
 }
