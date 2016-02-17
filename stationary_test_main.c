@@ -52,8 +52,8 @@ int main(int argc, char* argv[]) {
 	
 	GPUinit();
 	GPUopen(&disp, "Stationary", "./peops.cfg");
-	GPUdisplayText("You are now running Stationary");
-	updateDisplay();
+	//GPUdisplayText("You are now running Stationary");
+	//updateDisplay();
 	printf("You are now running stationary on display %lu\n", disp);
     printf("The GPU has the following status: 0x%08lx\n", (unsigned long)GPUreadStatus());
     S_do_gpu_startup();
