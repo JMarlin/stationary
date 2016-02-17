@@ -52,7 +52,7 @@ void S_upload_image_data(unsigned long* src, unsigned short x, unsigned short y,
 	int i;
 	
 	GPUwriteData(0x01000000); //Reset the command buffer
-	GPUwriteData(0x0A000000); //Copy image data to GPU command
+	GPUwriteData(0xA0000000); //Copy image data to GPU command
 	GPUwriteData((y << 16) | x); //Send x and y of destination
 	GPUwriteData((h << 16) | w); //Send h and w of image
 	
@@ -77,9 +77,9 @@ void S_clear_framebuffer(unsigned short val) {
 void S_draw_tri_textured(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x2, unsigned short y2, unsigned char r, unsigned char g, unsigned char b) {
     
 	//Make sure our texture is in the vram
-	//static unsigned long texture[] = {0x7FFF0000, 0x00007FFF};
+	static unsigned long texture[] = {0x7FFF0000, 0x00007FFF};
 	
-	//S_upload_image_data(&texture[0], 0, 256, 2, 2);
+	S_upload_image_data(&texture[0], 0, 256, 2, 2);
 	
     //Poly, one color, flat shaded
     GPUwriteData(
