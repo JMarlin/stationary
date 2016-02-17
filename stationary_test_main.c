@@ -93,7 +93,7 @@ void S_draw_tri_textured(unsigned short x0, unsigned short y0, unsigned short x1
     GPUwriteData((y0 << 16) | x0);
     
 	//Clut ID and texture location 1
-	GPUwriteData(0x00000001); //no CLUT, v = 0, u = 1
+	GPUwriteData(0x00000002); //no CLUT, v = 0, u = 1
 	
     //Vertex 2
     GPUwriteData((y1 << 16) | x1);
@@ -105,7 +105,7 @@ void S_draw_tri_textured(unsigned short x0, unsigned short y0, unsigned short x1
     GPUwriteData((y2 << 16) | x2);
 	
 	//Third texture location
-	GPUwriteData(0x00000101); //v = 1, u = 1
+	GPUwriteData(0x00000202); //v = 1, u = 1
 }
 
 int main(int argc, char* argv[]) {
