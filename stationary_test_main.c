@@ -26,8 +26,6 @@ void S_do_gpu_startup() {
 	GPUwriteStatus(0x03000000); //Enable the GPU
 }
 
-void S_load_texture()
-
 void S_draw_tri(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x2, unsigned short y2, unsigned char r, unsigned char g, unsigned char b) {
     
     //Poly, one color, flat shaded
