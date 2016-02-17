@@ -26,6 +26,8 @@ void S_do_gpu_startup() {
 	GPUwriteStatus(0x03000000); //Enable the GPU
 }
 
+void S_load_texture()
+
 void S_draw_tri(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x2, unsigned short y2, unsigned char r, unsigned char g, unsigned char b) {
     
     //Poly, one color, flat shaded
@@ -46,6 +48,54 @@ void S_draw_tri(unsigned short x0, unsigned short y0, unsigned short x1, unsigne
     GPUwriteData((y2 << 16) | x2);
 }
 
+void S_upload_image_data(unsigned long* src, unsigned short x, unsigned short y, unsigned short h, unsigned short w) {
+	
+	int pixel_count = (h * w) >> 1;
+	int i;
+	
+	GPUwriteData(0x01000000); //Reset the command buffer
+	GPUwriteData(0x0A000000); //Copy image data to GPU command
+	GPUwriteData((y << 16) | x); //Send x and y of destination
+	GPUwriteData((h << 16) | w); //Send h and w of image
+	
+	for(i = 0; i < pixel_count; i++)
+	    GPUwriteData(src[i]);
+}
+
+void S_draw_tri_textured(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x2, unsigned short y2, unsigned char r, unsigned char g, unsigned char b) {
+    
+	//Make sure our texture is in the vram
+	static unsigned long texture[] = {0x7FFF0000, 0x00007FFF};
+	
+	S_upload_image_data(&texture[0], 0, 256, 2, 2);
+	
+    //Poly, one color, flat shaded
+    GPUwriteData(
+        (GPU_DATA_CMD(PRIM_POLY, OPT_TME) << 24) |
+        b << 16 |
+        g << 8 |
+        r 
+    );
+    
+    //Vertex 1
+    GPUwriteData((y0 << 16) | x0);
+    
+	//Clut ID and texture location 1
+	GPUwriteData(0x00000001); //no CLUT, v = 0, u = 1
+	
+    //Vertex 2
+    GPUwriteData((y1 << 16) | x1);
+    
+	//Texture page info and second texture location
+	GPUwriteData(0x01900100); //Use 15-bit direct texture at (0,256) -- v = 1, u = 0 
+	
+    //Vertex 3
+    GPUwriteData((y2 << 16) | x2);
+	
+	//Third texture location
+	GPUwriteData(0x00000101); //v = 1, u = 1
+}
+
 int main(int argc, char* argv[]) {
 	
 	unsigned long disp;
@@ -60,8 +110,8 @@ int main(int argc, char* argv[]) {
     printf("The GPU has the following status: 0x%08lx\n", (unsigned long)GPUreadStatus());
     S_do_gpu_startup();
     printf("The GPU has the following status: 0x%08lx\n", (unsigned long)GPUreadStatus());
-    S_draw_tri(1, 1, 319, 239, 1, 239, 0xFF, 0x00, 0x00);
-	S_draw_tri(1, 1, 319, 1, 319, 239, 0x00, 0xFF, 0x00);
+    S_draw_tri_textured(1, 1, 319, 239, 1, 239, 0xFF, 0x00, 0x00);
+	S_draw_tri_textured(1, 1, 319, 1, 319, 239, 0x00, 0xFF, 0x00);
     updateDisplay();
     while(1); 
 	return 1;
