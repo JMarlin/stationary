@@ -15,7 +15,7 @@
 void S_do_gpu_startup() {
 	
 	GPUwriteStatus(0x00000000); //Reset GPU
-	GPUwriteStatus(0x06C5A25C); //Set horizontal display range to the default values of 0x260 - 0xC56
+	GPUwriteStatus(0x06C5A25B); //Set horizontal display range to the default values of 0x260 - 0xC56
 	GPUwriteStatus(0x07040010); //Set vertical display range to the default NTSC values of 0x010-0x100	 
 	GPUwriteStatus(0x08000001); //Set video mode to NTSC 15-bit non-interlaced 320x240
 	GPUwriteStatus(0x05000000); //Set x/y start of display area to (0,0)
