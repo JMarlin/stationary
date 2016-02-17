@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
     printf("The GPU has the following status: 0x%08lx\n", (unsigned long)GPUreadStatus());
     S_do_gpu_startup();
     printf("The GPU has the following status: 0x%08lx\n", (unsigned long)GPUreadStatus());
-    S_draw_tri(0, 200, 100, 0, 200, 200, 0x7F, 0x00, 0x00);
+    S_draw_tri(0, 240, 160, 0, 319, 240, 0xFF, 0x00, 0x00);
     updateDisplay();
     while(1); 
 	return 1;
