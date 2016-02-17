@@ -11,6 +11,20 @@
 #define OPT_VTX 0x08
 #define OPT_IIP 0x10
 
+void S_do_gpu_startup() {
+	
+	GPUwriteStatus(0x00000000); //Reset GPU
+	GPUwriteStatus(0x06C56260); //Set horizontal display range to the default values of 0x260 - 0xC56
+	GPUwriteStatus(0x07040010); //Set vertical display range to the default NTSC values of 0x010-0x100	 
+	GPUwriteStatus(0x08000001); //Set video mode to NTSC 15-bit non-interlaced 320x240
+	GPUwriteStatus(0x05000000); //Set x/y start of display area to (0,0)
+	GPUwriteData(0xE1000300); //Set draw mode
+	GPUwriteData(0xE3000000); //Set framebuffer drawing area top left to (0, 0)
+	GPUwriteData(0xE403C140); //Set framebuffer drawing area bottom right to (320, 240)
+	GPUwriteData(0xE5000000); //Set framebuffer drawing area offset to
+	GPUwriteStatus(0x03000000); //Enable the GPU
+}
+
 void S_draw_tri(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x2, unsigned short y2, unsigned char r, unsigned char g, unsigned char b) {
     
     //Poly, one color, flat shaded
@@ -41,12 +55,9 @@ int main(int argc, char* argv[]) {
 	GPUdisplayText("You are now running Stationary");
 	updateDisplay();
 	printf("You are now running stationary on display %lu\n", disp);
-    status = GPUreadStatus();
-    printf("The GPU has the following status: 0x%08lx\n", status);
-    //Enable GPU
-    GPUwriteStatus(0x03000000);
-    status = GPUreadStatus();
-    printf("The GPU has the following status: 0x%08lx\n", status);
+    printf("The GPU has the following status: 0x%08lx\n", GPUreadStatus());
+    S_do_gpu_startup();
+    printf("The GPU has the following status: 0x%08lx\n", GPUreadStatus());
     S_draw_tri(0, 200, 100, 0, 200, 200, 0x7F, 0x00, 0x00);
     updateDisplay();
     while(1); 
