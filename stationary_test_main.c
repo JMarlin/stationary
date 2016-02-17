@@ -77,9 +77,9 @@ void S_clear_framebuffer(unsigned short val) {
 void S_draw_tri_textured(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x2, unsigned short y2, unsigned char r, unsigned char g, unsigned char b) {
     
 	//Make sure our texture is in the vram
-	static unsigned long texture[] = {0xFF00FFFF, 0xFFFFFF00};
+	static unsigned long texture[] = {0xFFFF8000, 0x8000FFFF};
 	
-	S_upload_image_data(&texture[0], 0, 0, 2, 2);
+	S_upload_image_data(&texture[0], 0,256, 2, 2);
 	
     //Poly, one color, flat shaded
     GPUwriteData(
@@ -99,7 +99,7 @@ void S_draw_tri_textured(unsigned short x0, unsigned short y0, unsigned short x1
     GPUwriteData((y1 << 16) | x1);
     
 	//Texture page info and second texture location
-	GPUwriteData(0x01800100); //Use 15-bit direct texture at (0,256) -- v = 1, u = 0 
+	GPUwriteData(0x01900100); //Use 15-bit direct texture at (0,256) -- v = 1, u = 0 
 	
     //Vertex 3
     GPUwriteData((y2 << 16) | x2);
