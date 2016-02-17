@@ -60,6 +60,20 @@ void S_upload_image_data(unsigned long* src, unsigned short x, unsigned short y,
 	    GPUwriteData(src[i]);
 }
 
+void S_clear_framebuffer(unsigned long val) {
+	
+	int pixel_count = (240 * 320) >> 1;
+	int i;
+	
+	GPUwriteData(0x01000000); //Reset the command buffer
+	GPUwriteData(0x0A000000); //Copy image data to GPU command
+	GPUwriteData(0x00000000); //Send x and y of destination
+	GPUwriteData((240 << 16) | 320); //Send h and w of image
+	
+	for(i = 0; i < pixel_count; i++)
+	    GPUwriteData(val);
+}
+
 void S_draw_tri_textured(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x2, unsigned short y2, unsigned char r, unsigned char g, unsigned char b) {
     
 	//Make sure our texture is in the vram
@@ -108,8 +122,10 @@ int main(int argc, char* argv[]) {
     printf("The GPU has the following status: 0x%08lx\n", (unsigned long)GPUreadStatus());
     S_do_gpu_startup();
     printf("The GPU has the following status: 0x%08lx\n", (unsigned long)GPUreadStatus());
-    S_draw_tri_textured(1, 1, 319, 239, 1, 239, 0xFF, 0x00, 0x00);
-	S_draw_tri_textured(1, 1, 319, 1, 319, 239, 0x00, 0xFF, 0x00);
+	S_clear_framebuffer(0x00FF);
+	S_draw_tri(1, 1, 319, 239, 1, 239, 0xFF, 0x00, 0x00);
+	S_draw_tri(1, 1, 319, 1, 319, 239, 0x00, 0xFF, 0x00);
+    S_draw_tri_textured(0, 240, 160, 0, 320, 240, 0xFF, 0xFF, 0xFF);
     updateDisplay();
     while(1); 
 	return 1;
