@@ -62,13 +62,13 @@ void S_upload_image_data(unsigned long* src, unsigned short x, unsigned short y,
 
 void S_clear_framebuffer(unsigned short val) {
 	
-	int pixel_count = (1024 * 1024) >> 1;
+	int pixel_count = (1024 * 512) >> 1;
 	int i;
 	
 	GPUwriteData(0x01000000); //Reset the command buffer
 	GPUwriteData(0xA0000000); //Copy image data to GPU command
 	GPUwriteData(0x00000000); //Send x and y of destination
-	GPUwriteData((1024 << 16) | 1024); //Send h and w of image
+	GPUwriteData((512 << 16) | 1024); //Send h and w of image
 	
 	for(i = 0; i < pixel_count; i++)
 	    GPUwriteData((val << 16) | val);
@@ -77,9 +77,9 @@ void S_clear_framebuffer(unsigned short val) {
 void S_draw_tri_textured(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x2, unsigned short y2, unsigned char r, unsigned char g, unsigned char b) {
     
 	//Make sure our texture is in the vram
-	static unsigned long texture[] = {0x7FFF0000, 0x00007FFF};
+	//static unsigned long texture[] = {0x7FFF0000, 0x00007FFF};
 	
-	S_upload_image_data(&texture[0], 0, 256, 2, 2);
+	//S_upload_image_data(&texture[0], 0, 256, 2, 2);
 	
     //Poly, one color, flat shaded
     GPUwriteData(
@@ -99,7 +99,7 @@ void S_draw_tri_textured(unsigned short x0, unsigned short y0, unsigned short x1
     GPUwriteData((y1 << 16) | x1);
     
 	//Texture page info and second texture location
-	GPUwriteData(0x01900100); //Use 15-bit direct texture at (0,256) -- v = 1, u = 0 
+	GPUwriteData(0x01800100); //Use 15-bit direct texture at (0,256) -- v = 1, u = 0 
 	
     //Vertex 3
     GPUwriteData((y2 << 16) | x2);
