@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include "peops/externals.h"
+#include "peops/gpu.h"
 
 #define GPU_DATA_CMD(c, o) ((((c)&0x7)<<5) | ((o)&0x1F))
 #define PRIM_POLY 0x01
@@ -54,7 +55,7 @@ int main(int argc, char* argv[]) {
 	GPUopen(&disp, "Stationary", "./peops.cfg");
 	//GPUdisplayText("You are now running Stationary");
 	//updateDisplay();
-	iShowFPS = 0;
+	ulKeybits &= ~KEY_SHOWFPS;
 	printf("You are now running stationary on display %lu\n", disp);
     printf("The GPU has the following status: 0x%08lx\n", (unsigned long)GPUreadStatus());
     S_do_gpu_startup();
