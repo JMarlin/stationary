@@ -62,16 +62,16 @@ void S_upload_image_data(unsigned long* src, unsigned short x, unsigned short y,
 
 void S_clear_framebuffer(unsigned long val) {
 	
-	int pixel_count = (240 * 320) >> 1;
+	int pixel_count = (1024 * 1024) >> 1;
 	int i;
 	
 	GPUwriteData(0x01000000); //Reset the command buffer
-	GPUwriteData(0x0A000000); //Copy image data to GPU command
+	GPUwriteData(0xA0000000); //Copy image data to GPU command
 	GPUwriteData(0x00000000); //Send x and y of destination
-	GPUwriteData((240 << 16) | 320); //Send h and w of image
+	GPUwriteData((1024 << 16) | 1024); //Send h and w of image
 	
 	for(i = 0; i < pixel_count; i++)
-	    GPUwriteData(val);
+	    GPUwriteData((val << 16) | val);
 }
 
 void S_draw_tri_textured(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x2, unsigned short y2, unsigned char r, unsigned char g, unsigned char b) {
