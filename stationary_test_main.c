@@ -102,13 +102,13 @@ void S_draw_tri_textured(unsigned short x0, unsigned short y0, unsigned short x1
     GPUwriteData((y0 << 16) | x0);
     
 	//Clut ID and texture location 1
-	GPUwriteData(0x00000008); //no CLUT, v = 0, u = 8
+	GPUwriteData(0x00000800); //no CLUT, v = 8, u = 0
 	
     //Vertex 2
     GPUwriteData((y1 << 16) | x1);
     
 	//Texture page info and second texture location
-	GPUwriteData(0x01900400); //Use 15-bit direct texture at (0,256) -- v = 4, u = 0 
+	GPUwriteData(0x01900004); //Use 15-bit direct texture at (0,256) -- v = 0, u = 4 
 	
     //Vertex 3
     GPUwriteData((y2 << 16) | x2);
