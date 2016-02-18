@@ -2,7 +2,7 @@
 #-------------------------------------------------------------------------#
 # STATIONARY COMPONENTS                                                   #
 #-------------------------------------------------------------------------#
-gcc -c -o stationary_test_main.o stationary_test_main.c -lm -m32 -g
+gcc -c -o stationary_test_main.o stationary_test_main.c -m32 -g
 
 #-------------------------------------------------------------------------#
 # PEOPS COMPONENTS                                                        #
@@ -32,4 +32,4 @@ gcc -c -o zn.o peops/zn.c -m32 -g
 #-------------------------------------------------------------------------#
 # LINK                                                                    #
 #-------------------------------------------------------------------------#
-gcc -o stationary_test *.o $(pkg-config --libs x11) -m32  -g #ld -melf_i386
+gcc -o stationary_test *.o $(pkg-config --libs x11) -lm -m32  -g #ld -melf_i386
