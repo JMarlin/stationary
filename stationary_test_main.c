@@ -617,8 +617,9 @@ void draw_triangle(triangle* tri) {
     for(i = 0; i < 3; i++) 
         project(&(tri->v[i]), &p[i]);
     
-	S_draw_tri(p[0].x, p[0].y, p[1].x, p[1].y, p[2].x, p[2].y, (unsigned char)r & 0xFF, (unsigned char)g & 0xFF, (unsigned char)b * 0xFF);
-	
+	//S_draw_tri(p[0].x, p[0].y, p[1].x, p[1].y, p[2].x, p[2].y, (unsigned char)r & 0xFF, (unsigned char)g & 0xFF, (unsigned char)b * 0xFF);
+	S_draw_tri_textured(p[0].x, p[0].y, p[1].x, p[1].y, p[2].x, p[2].y, (unsigned char)r & 0xFF, (unsigned char)g & 0xFF, (unsigned char)b * 0xFF);
+		
 	/* OLD LESTER WAY 
     //sort vertices by ascending y
     f = 0; s = 1; t = 2;
@@ -971,6 +972,7 @@ int main(int argc, char* argv[]) {
         rotate_object_x_local(cube2, 1);
         rotate_object_z_local(cube2, 1);
 
+        
         S_clear_framebuffer(0xFF00);
         
         render_object(cube1);
