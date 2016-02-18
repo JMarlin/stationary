@@ -876,6 +876,10 @@ void render_object(object *obj) {
 
 int main(int argc, char* argv[]) {
 
+    unsigned long disp;
+    unsigned long status;
+    unsigned short tip_x;
+    int direction;
     int fov_angle, player_angle = 90, chg_angle = 0;
     float i = 0.0, step = 0, rstep = 0, fps, walkspeed = 0.04;
     color *c;
