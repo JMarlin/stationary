@@ -177,13 +177,13 @@ int InitLUTs(void)
  __asm__ __volatile__ ( "and $0x00800000, %%edx":::"edx");
  __asm__ __volatile__ ( "movl %%edx, %0": "=g" (nMMXsupport));
 #else
-  __asm
-  {
+#define cpuid _asm _emit 0x0f _asm _emit 0xa2 
+  __asm {
     mov  eax, 1
     cpuid
     and  edx, 0x00800000
     mov  nMMXsupport, edx
-  }
+  };
 #endif
   return nMMXsupport;
 }

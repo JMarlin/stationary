@@ -224,9 +224,10 @@ int               iRumbleTime=0;
 int				  iStopSaver=0;
 HINSTANCE kernel32LibHandle = NULL;
 
+/* Figure this out later so that we can disable the screensaver
 // A stub function, that does nothing .... but it does "nothing" well :)
 EXECUTION_STATE WINAPI STUB_SetThreadExecutionState(EXECUTION_STATE esFlags)
-{
+{ 
 	return esFlags;
 }
 
@@ -259,6 +260,7 @@ BOOL FreeKernel32(void)
 
 	return TRUE;
 }
+*/
 #else
 
 // Linux: Stub the functions
@@ -553,7 +555,7 @@ long CALLBACK GPUinit()                                // GPU INIT
  bDoVSyncUpdate=TRUE;
 
  // Get a handle for kernel32.dll, and access the required export function
- LoadKernel32();
+ //LoadKernel32(); //Killing this until we can figure out how to get this to compile on VC++ '97
 
  return 0;
 }
@@ -581,8 +583,8 @@ long CALLBACK GPUopen(HWND hwndGPU)                    // GPU OPEN
 
  ulInitDisplay();                                      // setup direct draw
 
- if(iStopSaver)
-  D_SetThreadExecutionState(ES_SYSTEM_REQUIRED|ES_DISPLAY_REQUIRED|ES_CONTINUOUS);
+ //if(iStopSaver) //Enable this when we figure out how to make this work in VC++ '97
+  //D_SetThreadExecutionState(ES_SYSTEM_REQUIRED|ES_DISPLAY_REQUIRED|ES_CONTINUOUS);
 
 
  return 0;

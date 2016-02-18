@@ -47,6 +47,20 @@
 #include "fps.h"
 #include "gpu.h"
 
+BOOL           bInitCap;
+int            UseFrameLimit;
+int            UseFrameSkip;
+float          fFrameRate;
+int            iFrameLimit;
+float          fFrameRateHz;
+float          fps_skip;
+float          fps_cur;
+#ifdef _WINDOWS
+BOOL           IsPerformanceCounter;
+int			  iStopSaver;
+#endif
+BOOL           bSSSPSXLimit;
+
 ////////////////////////////////////////////////////////////////////////
 // FPS stuff
 ////////////////////////////////////////////////////////////////////////
