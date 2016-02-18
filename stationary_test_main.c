@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <math.h>
 #include <memory.h>
 #include "peops/externals.h"
@@ -445,54 +446,7 @@ void project(vertex* v, screen_point* p) {
     p->z = TO_SCREEN_Z(v->z);
 }
 
-//Draw an rgb-colored line along the scanline from x=x1 to x=x2, interpolating
-//z-values and only drawing the pixel if the interpolated z-value is less than
-//the value already written to the z-buffer
-void draw_scanline(SDL_Renderer *r, float scanline, float x0, float z0, float x1, float z1) {
-
-    unsigned short newz;
-    int z_addr;	
-	float dz, dx, m, newz_f, t; 
-                 
-    //don't draw off the screen
-    if(scanline >= SCREEN_HEIGHT || scanline < 0)
-    	return;  
-      
-    if(x0 > x1) {
-     
-        t = x0;
-        x0 = x1;
-        x1 = t;
-        t = z0;
-        z0 = z1;
-        z1 = t;
-    } 
-    	    
-	dz = z1 - z0;
-    dx = x1 - x0;
-    m = dx ? dz/dx : 0;
-    z_addr = scanline * SCREEN_WIDTH + x0;
-       
-    for(; x0 <= x1; x0 += 1, z_addr++) {
-
-        if(x0 < SCREEN_WIDTH && x0 >= 0) {
-
-            newz_f = m*(x0 - x1) + z1;
-            newz = (unsigned short)(newz_f >= 65535 ? 65535 : newz_f < 0 ? 0 : newz_f);
-            
-            //Check the z buffer and draw the point	
-            if(newz < zbuf[z_addr]) {
-                
-                    //Uncomment the below to view the depth buffer
-                    //SDL_SetRenderDrawColor(r, newz >> 8, newz >> 8, newz >> 8, 0xFF);
-                    SDL_RenderDrawPoint(r, (int)x0, (int)scanline);
-                    zbuf[z_addr] = newz;
-            }
-        }
-    }
-}
-
-void draw_triangle(SDL_Renderer *rend, triangle* tri) {
+void draw_triangle(triangle* tri) {
     
     int i;
     screen_point p[3];
@@ -632,7 +586,7 @@ void draw_triangle(SDL_Renderer *rend, triangle* tri) {
 	}*/
 }
 
-void clip_and_render(SDL_Renderer *r, triangle* tri) {    
+void clip_and_render(triangle* tri) {    
 
     int count;
     int on_second_iteration = 0;
@@ -723,8 +677,8 @@ void clip_and_render(SDL_Renderer *r, triangle* tri) {
                 clone_vertex(&(tri->v[fixed[1]]), &(out_triangle[1].v[fixed[1]]));
                 
                 //Run the new triangles through another round of processing
-                clip_and_render(r, &out_triangle[0]);
-                clip_and_render(r, &out_triangle[1]);
+                clip_and_render(&out_triangle[0]);
+                clip_and_render(&out_triangle[1]);
                 
                 //Exit the function early for dat tail recursion              
                 return;
@@ -771,7 +725,7 @@ void clip_and_render(SDL_Renderer *r, triangle* tri) {
                 clone_vertex(&new_point[1], &(out_triangle[0].v[fixed[1]]));
                 
                 //Send through processing again
-                clip_and_render(r, &out_triangle[0]);
+                clip_and_render(&out_triangle[0]);
                     
                 //Exit the function early for dat tail recursion  
                 return;
@@ -799,19 +753,19 @@ void clip_and_render(SDL_Renderer *r, triangle* tri) {
     draw_triangle(r, tri);   
 }
 
-void render_triangle(SDL_Renderer *rend, triangle* tri) {
+void render_triangle(triangle* tri) {
 
-    clip_and_render(rend, tri);
+    clip_and_render(tri);
 }
 
-void render_object(SDL_Renderer *r, object *obj) {
+void render_object(object *obj) {
     
     node* item;
     int i;
     
     list_for_each(&(obj->tri_list), item, i) {
         
-        render_triangle(r, (triangle*)item->payload);
+        render_triangle((triangle*)item->payload);
     }
 }
 
@@ -930,6 +884,16 @@ int main(int argc, char* argv[]) {
     int done = 0;
     int numFrames = 0; 
 
+    GPUinit();
+	GPUopen(&disp, "Stationary", "./peops.cfg");
+	//GPUdisplayText("You are now running Stationary");
+	//updateDisplay();
+	ulKeybits &= ~KEY_SHOWFPS;
+	printf("You are now running stationary on display %lu\n", disp);
+    printf("The GPU has the following status: 0x%08lx\n", (unsigned long)GPUreadStatus());
+    S_do_gpu_startup();
+    printf("The GPU has the following status: 0x%08lx\n", (unsigned long)GPUreadStatus());
+
     if(!(c = new_color(50, 200, 255, 255))) {
         
         printf("Could not allocate a new color\n");
@@ -1011,10 +975,6 @@ int main(int argc, char* argv[]) {
         
         //while((SDL_GetTicks() - frame_start) <= 14);
     }
-
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
 
     return 0;
 }
