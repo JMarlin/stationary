@@ -925,8 +925,10 @@ int main(int argc, char* argv[]) {
 
     //SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 
+    printf("Translating objects...");
     translate_object(cube1, 0.0, -6.0, 2.0);
     translate_object(cube2, 0.0, 0.0, 2.0);
+	printf("done\n");
     //rotate_object_y_local(cube, 45);
     //rotate_object_x_local(cube, 45);
     //rotate_object_z_local(cube, 45);
@@ -958,6 +960,7 @@ int main(int argc, char* argv[]) {
     test_tri[1].v[2].c = c;
     */
 
+    printf("Starting render loop\n");
     while(!done) {
 
         i += step;
