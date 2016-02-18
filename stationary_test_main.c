@@ -121,6 +121,8 @@ int main(int argc, char* argv[]) {
 	
 	unsigned long disp;
     unsigned long status;
+    unsigned short tip_x;
+    int direction;
 	
 	GPUinit();
 	GPUopen(&disp, "Stationary", "./peops.cfg");
@@ -132,10 +134,31 @@ int main(int argc, char* argv[]) {
     S_do_gpu_startup();
     printf("The GPU has the following status: 0x%08lx\n", (unsigned long)GPUreadStatus());
 	S_clear_framebuffer(0xFF00);
-	S_draw_tri(0, 0, 320, 240, 0, 240, 0xFF, 0x00, 0x00);
-	S_draw_tri(0, 0, 320, 0, 320, 240, 0x00, 0xFF, 0x00);
-    S_draw_tri_textured(0, 240, 160, 0, 320, 240, 0xFF, 0xFF, 0xFF);
-    updateDisplay();
-    while(1); 
+    
+    tip_x = 0;
+    direction = 1;
+    
+    while(1) {
+     
+        S_draw_tri(0, 0, 320, 240, 0, 240, 0xFF, 0x00, 0x00);
+        S_draw_tri(0, 0, 320, 0, 320, 240, 0x00, 0xFF, 0x00);
+        S_draw_tri_textured(0, 240, tip_x, 0, 320, 240, 0xFF, 0xFF, 0xFF);
+        updateDisplay();
+        
+        if(direction) {
+            
+            if(tip_x == 320) 
+                direction = 0;
+            else
+                tip_x++;
+        } else {
+            
+            if(tip_x == 0) 
+                direction = 1;
+            else
+                tip_x--;
+        }
+    } 
+    
 	return 1;
 }
