@@ -1,0 +1,60 @@
+# Project: stationary
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = stationary_test_main.o peops/cfg.o peops/draw.o peops/DrawString.o peops/fps.o peops/gpu.o peops/key.o peops/menu.o peops/prim.o peops/soft.o peops/zn.o $(RES)
+LINKOBJ  = stationary_test_main.o peops/cfg.o peops/draw.o peops/DrawString.o peops/fps.o peops/gpu.o peops/key.o peops/menu.o peops/prim.o peops/soft.o peops/zn.o $(RES)
+LIBS =  -L"C:/Dev-Cpp/lib" -mwindows  
+INCS =  -I"C:/Dev-Cpp/include" 
+CXXINCS =  -I"C:/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Dev-Cpp/include/c++/3.4.2"  -I"C:/Dev-Cpp/include" 
+BIN  = stationary.exe
+CXXFLAGS = $(CXXINCS)  
+CFLAGS = $(INCS)  
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before stationary.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CC) $(LINKOBJ) -o "stationary.exe" $(LIBS)
+
+stationary_test_main.o: stationary_test_main.c
+	$(CC) -c stationary_test_main.c -o stationary_test_main.o $(CFLAGS)
+
+peops/cfg.o: peops/cfg.c
+	$(CC) -c peops/cfg.c -o peops/cfg.o $(CFLAGS)
+
+peops/draw.o: peops/draw.c
+	$(CC) -c peops/draw.c -o peops/draw.o $(CFLAGS)
+
+peops/DrawString.o: peops/DrawString.c
+	$(CC) -c peops/DrawString.c -o peops/DrawString.o $(CFLAGS)
+
+peops/fps.o: peops/fps.c
+	$(CC) -c peops/fps.c -o peops/fps.o $(CFLAGS)
+
+peops/gpu.o: peops/gpu.c
+	$(CC) -c peops/gpu.c -o peops/gpu.o $(CFLAGS)
+
+peops/key.o: peops/key.c
+	$(CC) -c peops/key.c -o peops/key.o $(CFLAGS)
+
+peops/menu.o: peops/menu.c
+	$(CC) -c peops/menu.c -o peops/menu.o $(CFLAGS)
+
+peops/prim.o: peops/prim.c
+	$(CC) -c peops/prim.c -o peops/prim.o $(CFLAGS)
+
+peops/soft.o: peops/soft.c
+	$(CC) -c peops/soft.c -o peops/soft.o $(CFLAGS)
+
+peops/zn.o: peops/zn.c
+	$(CC) -c peops/zn.c -o peops/zn.o $(CFLAGS)

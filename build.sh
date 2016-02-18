@@ -2,7 +2,7 @@
 #-------------------------------------------------------------------------#
 # STATIONARY COMPONENTS                                                   #
 #-------------------------------------------------------------------------#
-gcc -c -o stationary_test_main.o stationary_test_main.c -m32 -g
+gcc -c -o stationary_test_main.o stationary_test_main.c -lm -m32 -g
 
 #-------------------------------------------------------------------------#
 # PEOPS COMPONENTS                                                        #
