@@ -29,6 +29,7 @@ int List_add(List* list, void* value);
 int List_has_next(List* list);
 int List_get_index(List* list, void* value);
 void* List_get_at(List* list, int index);
+int List_add_at(List* list, int index, void* item);
 void* List_pop(List* list, void* value);
 void List_remove(List* list, void* value, deleter del_func);
 void List_print(List* list, printer print_func);

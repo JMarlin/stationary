@@ -193,6 +193,36 @@ void* List_get_at(List* list, int index) {
     return cur_item ? cur_item->value : (void*)0;
 }
 
+//Shoves the item at the given index one more spot forward
+//and inserts the new item at the location of the old item
+int List_add_at(List* list, int index, void* item) {
+    
+    ListItem* cur_item = list->root_item;
+	ListItem* new_item = (ListItem*)malloc(sizeof(ListItem));
+    
+    if(!new_item)
+        return 0;  
+    
+	if(index >= list->count)
+        index = list->count - 1;  
+    
+	if(index < 0) 
+	    index = 0;
+    
+    while(index) {
+		
+        cur_item = cur_item->next;
+	    index--;
+	}
+    
+	new_item->value = item;
+    new_item->prev_item = cur_item->prev_item;
+	new_item->next_item = cur_item;
+	cur_item->prev_item = new_item;
+	
+	return 1;
+}
+
 //Finds the first instance of the pointer value in the list, -1 if not found
 int List_get_index(List* list, void* value) {
 	

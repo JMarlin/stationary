@@ -8,6 +8,9 @@ gcc -c -o vertex.o vertex.c -m32 -g
 gcc -c -o triangle.o triangle.c -m32 -g
 gcc -c -o object.o object.c -m32 -g
 gcc -c -o cube.o cube.c -m32 -g
+gcc -c -o screentriangle.o screentriangle.c -m32 -g 
+gcc -c -o zlist.o zlist.c -m32 -g
+gcc -c -o renderer.o renderer.c -m32 -g
 
 #-------------------------------------------------------------------------#
 # PEOPS COMPONENTS                                                        #
