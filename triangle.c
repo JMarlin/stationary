@@ -1,5 +1,6 @@
 #include "triangle.h"
 #include "vertex.h"
+#include <stdlib.h>
 
 Triangle *Triangle_new(Vertex *v1, Vertex *v2, Vertex *v3) {
     
