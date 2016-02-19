@@ -1,5 +1,6 @@
 #include "screentriangle.h"
 #include "color.h"
+#include <stdlib.h>
 
 void ScreenTriangle_deleter(void* screen_triangle) {
 	
@@ -16,8 +17,8 @@ ScreenTriangle* ScreenTriangle_new(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint
 	float max_z;
 	ScreenTriangle *screen_triangle = (ScreenTriangle*)malloc(sizeof(ScreenTriangle));
 	
-	if(!ScreenTriangle)
-	    return ScreenTriangle;
+	if(!screen_triangle)
+	    return screen_triangle;
 	
 	//Unrolled 'find max' loop 	
 	max_z = p1->z;
