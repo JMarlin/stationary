@@ -2,6 +2,7 @@
 #include "object.h"
 #include "triangle.h"
 #include "list.h"
+#include "mathhelpers.h"
 #include <math.h>
 #include <stdlib.h>
 
