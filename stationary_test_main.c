@@ -305,14 +305,14 @@ void clip_and_render(Triangle* triangle) {
                 
                 //Test/draw the new triangles, maintaining the CW or CCW ordering
                 //Build the first triangle
-                clone_vertex(&new_point[0], &(out_triangle[0].v[original]));
-                clone_vertex(&(triangle->v[fixed[0]]), &(out_triangle[0].v[fixed[0]]));
-                clone_vertex(&(triangle->v[fixed[1]]), &(out_triangle[0].v[fixed[1]]));
+                Vertex_clone(&new_point[0], &(out_triangle[0].v[original]));
+                Vertex_clone(&(triangle->v[fixed[0]]), &(out_triangle[0].v[fixed[0]]));
+                Vertex_clone(&(triangle->v[fixed[1]]), &(out_triangle[0].v[fixed[1]]));
                     
                 //Build the second triangle    
-                clone_vertex(&new_point[1], &(out_triangle[1].v[original]));
-                clone_vertex(&new_point[0], &(out_triangle[1].v[fixed[0]]));
-                clone_vertex(&(triangle->v[fixed[1]]), &(out_triangle[1].v[fixed[1]]));
+                Vertex_clone(&new_point[1], &(out_triangle[1].v[original]));
+                Vertex_clone(&new_point[0], &(out_triangle[1].v[fixed[0]]));
+                Vertex_clone(&(triangle->v[fixed[1]]), &(out_triangle[1].v[fixed[1]]));
                 
                 //Run the new triangles through another round of processing
                 clip_and_render(&out_triangle[0]);
@@ -358,9 +358,9 @@ void clip_and_render(Triangle* triangle) {
                 }      
                 
                 //Start building the new triangles, maintaining the CW or CCW ordering 
-                clone_vertex(&(triangle->v[original]), &(out_triangle[0].v[original]));
-                clone_vertex(&new_point[0], &(out_triangle[0].v[fixed[0]]));
-                clone_vertex(&new_point[1], &(out_triangle[0].v[fixed[1]]));
+                Vertex_clone(&(triangle->v[original]), &(out_triangle[0].v[original]));
+                Vertex_clone(&new_point[0], &(out_triangle[0].v[fixed[0]]));
+                Vertex_clone(&new_point[1], &(out_triangle[0].v[fixed[1]]));
                 
                 //Send through processing again
                 clip_and_render(&out_triangle[0]);
@@ -446,29 +446,29 @@ int main(int argc, char* argv[]) {
     //SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 
     printf("Translating objects...");
-    translate_object(cube1, 0.0, -6.0, 2.0);
-    translate_object(cube2, 0.0, 0.0, 2.0);
+    Object_translate(cube1, 0.0, -6.0, 2.0);
+    Object_translate(cube2, 0.0, 0.0, 2.0);
 	printf("done\n");
-    //rotate_object_y_local(cube, 45);
-    //rotate_object_x_local(cube, 45);
-    //rotate_object_z_local(cube, 45);
+    //Object_rot_y_local(cube, 45);
+    //Object_rot_x_local(cube, 45);
+    //Object_rot_z_local(cube, 45);
     
     printf("Starting render loop\n");
     while(!done) {
 
         i += step;
-        //translate_object(cube1, 0.0, 0.0, step);
-        rotate_object_y_local(cube1, 1);
-        rotate_object_x_local(cube1, 1);
-        rotate_object_z_local(cube1, 1);        
-        rotate_object_x_local(cube2, 1);
-        rotate_object_z_local(cube2, 1);
+        //Object_translate(cube1, 0.0, 0.0, step);
+        Object_rot_y_local(cube1, 1);
+        Object_rot_x_local(cube1, 1);
+        Object_rot_z_local(cube1, 1);        
+        Object_rot_x_local(cube2, 1);
+        Object_rot_z_local(cube2, 1);
 
         
         S_clear_framebuffer(0xFF00);
         
-        render_object(cube1);
-        render_object(cube2);  
+        Object_render(cube1);
+        Object_render(cube2);  
         
         updateDisplay();
     }
