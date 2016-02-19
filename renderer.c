@@ -382,5 +382,5 @@ void S_commit_scene() {
 	
 	ZList_render();
 	ZList_clear();
-	updateScreen();
+	updateDisplay();
 }
