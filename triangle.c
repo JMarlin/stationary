@@ -23,6 +23,6 @@ void Triangle_deleter(void* triangle) {
 
 void Triangle_delete(Triangle *triangle) {
 	
-	free((void*)Triangle);
+	free((void*)triangle);
 }
 
