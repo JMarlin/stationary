@@ -59,11 +59,13 @@ void Object_translate(Object* object, float x, float y, float z) {
     List_for_each(object->triangles, triangle, Triangle*) {
                 
         for(j = 0; j < 3; j++) {
-        
-		    printf("Updating triangle 0x%08x vertex %d\n", (unsigned long)triangle, j);
-            triangle->v[j].x += x;
-            triangle->v[j].y += y;
-            triangle->v[j].z += z;
+        	
+			printf("x(%f) -> ", triangle->v[j].x);	    
+            triangle->v[j].x += x; printf("x(%f)\n", triangle->v[j].x);
+			printf("y(%f) -> ", triangle->v[j].y);	    
+            triangle->v[j].y += y; printf("y(%f)\n", triangle->v[j].y);
+			printf("z(%f) -> ", triangle->v[j].z);	    
+            triangle->v[j].z += z; printf("z(%f)\n", triangle->v[j].z);
         }
     }
 }
