@@ -2,6 +2,7 @@
 #define OBJECT_H
 
 #include "list.h"
+#include "vertex.h"
 
 typedef struct Object {
     List* triangles;
