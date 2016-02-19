@@ -6,4 +6,4 @@
 
 Object* Cube_new(float s, color24 c);
 
-#endif CUBE_H
+#endif //CUBE_H
