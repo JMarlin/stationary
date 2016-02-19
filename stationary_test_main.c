@@ -9,6 +9,7 @@
 #include "list.h"
 #include "peops/externals.h"
 #include "peops/gpu.h"
+#include "mathhelpers.h"
 
 #define GPU_DATA_CMD(c, o) ((((c)&0x7)<<5) | ((o)&0x1F))
 #define PRIM_POLY 0x01
@@ -27,11 +28,10 @@
 
 //Convert a point scaled such that 1.0, 1.0 is at the upper right-hand
 //corner of the screen and -1.0, -1.0 is at the bottom right to pixel coords
-#define PI 3.141592653589793
 #define TO_SCREEN_Y(y) ((int)((SCREEN_HEIGHT-(y*SCREEN_HEIGHT))/2.0))
 #define TO_SCREEN_X(x) ((int)((SCREEN_WIDTH+(x*SCREEN_HEIGHT))/2.0))
 #define TO_SCREEN_Z(z) ((unsigned short)((z) > SCREEN_DEPTH || z < 0 ? 65535 : ((z*65535.0)/SCREEN_DEPTH)))
-#define DEG_TO_RAD(a) ((((float)a)*PI)/180.0)
+
 
 float focal_length;
 
