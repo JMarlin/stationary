@@ -34,14 +34,26 @@ int ZList_add(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c) {
 		i++;
 	}
 	
-	printf("Adding triangle at index %i\n", i);
-	if(!List_add_at(zlist, i, (void*)new_screen_triangle)) {
+	if(i == zlist->count) {
 		
-		printf("Fail\n");
-	    return 0;
+		printf("Adding triangle at end of list\n", i);
+		if(!List_add(zlist, (void*)new_screen_triangle)) {
+			
+			printf("Fail\n");
+			return 0;
+		}
+	} else {
+	
+		printf("Adding triangle at index %i\n", i);
+		if(!List_add_at(zlist, i, (void*)new_screen_triangle)) {
+			
+			printf("Fail\n");
+			return 0;
+		}
 	}
 		
 	printf("Success\n");
+	return 1;
 }
 
 void ZList_render() {
