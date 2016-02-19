@@ -65,11 +65,11 @@ int main(int argc, char* argv[]) {
 
         i += step;
         //Object_translate(cube1, 0.0, 0.0, step);
-        Object_rot_y_local(cube1, 1);
-        Object_rot_x_local(cube1, 1);
-        Object_rot_z_local(cube1, 1);        
-        Object_rot_x_local(cube2, 1);
-        Object_rot_z_local(cube2, 1);
+        //Object_rot_y_local(cube1, 1);
+        //Object_rot_x_local(cube1, 1);
+        //Object_rot_z_local(cube1, 1);        
+        //Object_rot_x_local(cube2, 1);
+        Object_rot_y_local(cube2, 1);
 
         S_clear_framebuffer(RGB15(0, 10, 31));
         
