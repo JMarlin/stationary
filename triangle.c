@@ -13,7 +13,7 @@ Triangle *Triangle_new(Vertex *v1, Vertex *v2, Vertex *v3) {
     Vertex_clone(v2, &(triangle->v[1]));
     Vertex_clone(v3, &(triangle->v[2]));    
     
-    return ret_tri;
+    return triangle;
 }
 
 void Triangle_deleter(void* triangle) {
