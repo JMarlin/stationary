@@ -120,6 +120,50 @@ void S_draw_tri_textured(unsigned short x0, unsigned short y0, unsigned short x1
 	GPUwriteData(0x00000808); //v = 8, u = 8
 }
 
+void S_draw_quad_textured(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x2, unsigned short y2, unsigned short x3, unsigned short y3, color24 c) {
+    
+	//Make sure our texture is in the vram
+	static unsigned long texture[] = {
+        0xFFFFFFFF, 0x8000FFFF, 0xFFFF8000, 0xFFFFFFFF,
+        0xFFFFFFFF, 0x8000FFFF, 0xFFFF8000, 0xFFFFFFFF,
+        0xFFFFFFFF, 0xFFFF8000, 0x8000FFFF, 0xFFFFFFFF,
+        0xFFFFFFFF, 0xFFFF8000, 0x8000FFFF, 0xFFFFFFFF,
+        0x8000FFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFF8000,
+        0x8000FFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFF8000,
+        0xFFFF8000, 0xFFFFFFFF, 0xFFFFFFFF, 0x8000FFFF,
+        0x80008000, 0x80008000, 0x80008000, 0x80008000
+    };
+	
+	S_upload_image_data(&texture[0], 0, 256, 8, 8);
+	
+    //Poly, one color, flat shaded
+    GPUwriteData(0x2C << 24) | c);
+    
+    //Vertex 1
+    GPUwriteData((y0 << 16) | x0);
+    
+	//Clut ID and texture location 1
+	GPUwriteData(0x00000000); //no CLUT, v = 0, u = 0
+	
+    //Vertex 2
+    GPUwriteData((y1 << 16) | x1);
+    
+	//Texture page info and second texture location
+	GPUwriteData(0x01900008); //Use 15-bit direct texture at (0,256) -- v = 0, u = 8 
+	
+    //Vertex 3
+    GPUwriteData((y2 << 16) | x2);
+	
+	//Third texture location
+	GPUwriteData(0x00000808); //v = 8, u = 8
+	
+	//Vertex 4
+    GPUwriteData((y3 << 16) | x3);
+	
+	//Third texture location
+	GPUwriteData(0x00000800); //v = 8, u = 0
+}
+
 void project(Vertex* v, ScreenPoint* p) {
 
     float delta = (v->z == 0.0) ? 1.0 : (focal_length/v->z);

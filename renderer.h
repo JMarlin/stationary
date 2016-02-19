@@ -4,6 +4,7 @@
 #include "vertex.h"
 #include "color.h"
 #include "triangle.h"
+#include "quad.h"
 #include "object.h"
 #include "screentriangle.h"
 
@@ -38,8 +39,10 @@ void S_draw_tri(unsigned short x0, unsigned short y0, unsigned short x1, unsigne
 void S_upload_image_data(unsigned long* src, unsigned short x, unsigned short y, unsigned short h, unsigned short w);
 void S_clear_framebuffer(unsigned short val);
 void S_draw_tri_textured(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x2, unsigned short y2, color24 c);
+void S_draw_quad_textured(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x2, unsigned short y2, unsigned short x3, unsigned short y3, color24 c);
 void project(Vertex* v, ScreenPoint* p);
 void draw_triangle(Triangle* triangle);
+void draw_quad(Quad* quad);
 void clip_and_render(Triangle* triangle);
 void Triangle_render(Triangle* triangle);
 void Object_render(Object *object);
