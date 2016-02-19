@@ -69,7 +69,7 @@ void ZList_render() {
 			screen_triangle->points[1].x,
 			screen_triangle->points[1].y, 
 			screen_triangle->points[2].x,
-			screen_triangle->points[2].x, 
+			screen_triangle->points[2].y, 
 			screen_triangle->c
 		);
 }
