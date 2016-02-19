@@ -426,13 +426,13 @@ int main(int argc, char* argv[]) {
     S_do_gpu_startup();
     printf("The GPU has the following status: 0x%08lx\n", (unsigned long)GPUreadStatus());
         
-    if(!(cube1 = new_cube(10.0, RGB24(255, 255, 255)))) {
+    if(!(cube1 = Cube_new(10.0, RGB24(255, 255, 255)))) {
         
         printf("Could not allocate a new cube\n");
         return -1;
     }
     
-    if(!(cube2 = RGB24(255, 255, 255))) {
+    if(!(cube2 = Cube_new(1.0, RGB24(255, 255, 255)))) {
         
         printf("Could not allocate a new cube\n");
         return -1;
