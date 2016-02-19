@@ -197,7 +197,7 @@ void draw_triangle(Triangle* triangle) {
         project(&(triangle->v[i]), &p[i]);
     
 	//S_draw_tri(p[0].x, p[0].y, p[1].x, p[1].y, p[2].x, p[2].y, (unsigned char)r & 0xFF, (unsigned char)g & 0xFF, (unsigned char)b * 0xFF);
-	ZList_add(&p[0], &p[1], &p[2], RGB24((unsigned char)r, (unsigned char)g, (unsigned char)b));
+	ZList_add(&p[0], &p[1], &p[2], triangle->c);
 }
 
 void clip_and_render(Triangle* triangle) {    
@@ -291,6 +291,8 @@ void clip_and_render(Triangle* triangle) {
                 Vertex_clone(&(triangle->v[fixed[1]]), &(out_triangle[1].v[fixed[1]]));
                 
                 //Run the new triangles through another round of processing
+				out_triangle[0].c = triangle->c;
+				out_triangle[1].c = triangle->c;
                 clip_and_render(&out_triangle[0]);
                 clip_and_render(&out_triangle[1]);
                 
@@ -339,6 +341,7 @@ void clip_and_render(Triangle* triangle) {
                 Vertex_clone(&new_point[1], &(out_triangle[0].v[fixed[1]]));
                 
                 //Send through processing again
+				out_triangle[0].c = triangle->c;
                 clip_and_render(&out_triangle[0]);
                     
                 //Exit the function early for dat tail recursion  

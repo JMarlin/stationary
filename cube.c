@@ -34,6 +34,11 @@ Object* Cube_new(float s, color24 c) {
                   {7, 4, 0},
                   {0, 3, 7}
               };
+	const color24 tag_color[12] = {
+	    RGB24(0, 0, 0), RGB24(0, 0, 0xFF), RGB24(0, 0xFF, 0), RGB24(0, 0xFF, 0xFF),
+		RGB24(0xFF, 0, 0), RGB24(0xFF, 0, 0xFF), RGB24(0xFF, 0xFF, 0), RGB24(0xFF, 0xFF, 0xFF),
+		RGB24(0, 0, 0x88), RGB24(0, 0x88, 0), RGB24(0, 0x88, 0x88), RGB24(0x88, 0, 0) 	
+	};
     
     if(!object) {
         
@@ -61,7 +66,7 @@ Object* Cube_new(float s, color24 c) {
         
         printf("[new_cube] Creating new triangle (%f, %f, %f), (%f, %f, %f), (%f, %f, %f)\n", temp_v[0].x, temp_v[0].y, temp_v[0].z, temp_v[1].x, temp_v[1].y, temp_v[1].z,  temp_v[2].x, temp_v[2].y, temp_v[2].z);
         
-        if(!(Object_add_triangle(object, &temp_v[0], &temp_v[1], &temp_v[2]))) {
+        if(!(Object_add_triangle(object, &temp_v[0], &temp_v[1], &temp_v[2], tag_color[i]))) {
             
             printf("[new_cube] failed add new triangle #%d to the object\n", i+1);
             Object_delete(object);

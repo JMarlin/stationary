@@ -3,6 +3,7 @@
 
 #include "list.h"
 #include "vertex.h"
+#include "color.h"
 
 typedef struct Object {
     List* triangles;
@@ -13,7 +14,7 @@ typedef struct Object {
 
 
 void Object_delete(Object *object);
-int Object_add_triangle(Object* object, Vertex *v1, Vertex *v2, Vertex *v3);
+int Object_add_triangle(Object* object, Vertex *v1, Vertex *v2, Vertex *v3, color24 c);
 Object *Object_new();
 void Object_translate(Object* object, float x, float y, float z);
 void Object_rot_x_global(Object* object, float angle);

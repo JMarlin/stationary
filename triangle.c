@@ -1,8 +1,9 @@
 #include "triangle.h"
 #include "vertex.h"
+#include "color.h"
 #include <stdlib.h>
 
-Triangle *Triangle_new(Vertex *v1, Vertex *v2, Vertex *v3) {
+Triangle *Triangle_new(Vertex *v1, Vertex *v2, Vertex *v3, color24 c) {
     
     Triangle *triangle = ((Triangle*)malloc(sizeof(Triangle)));
     
@@ -12,6 +13,7 @@ Triangle *Triangle_new(Vertex *v1, Vertex *v2, Vertex *v3) {
     Vertex_clone(v1, &(triangle->v[0]));
     Vertex_clone(v2, &(triangle->v[1]));
     Vertex_clone(v3, &(triangle->v[2]));    
+	triangle->c = c;
     
     return triangle;
 }

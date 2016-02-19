@@ -3,6 +3,7 @@
 #include "triangle.h"
 #include "list.h"
 #include "mathhelpers.h"
+#include "color.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -12,11 +13,11 @@ void Object_delete(Object *object) {
     free((void*)object);
 }
 
-int Object_add_triangle(Object* object, Vertex *v1, Vertex *v2, Vertex *v3) {
+int Object_add_triangle(Object* object, Vertex *v1, Vertex *v2, Vertex *v3, color24 c) {
 	
 	Triangle* triangle;
 	
-	if(!(triangle = Triangle_new(v1, v2, v3)))
+	if(!(triangle = Triangle_new(v1, v2, v3, c)))
 	    return 0;
     
 	if(!List_add(object->triangles, (void*)triangle)) {
