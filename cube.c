@@ -1,5 +1,7 @@
 #include "object.h"
+#include "color.h"
 #include "vertex.h"
+#include "cube.h"
 
 Object *Cube_new(float s, color24 c) {
     

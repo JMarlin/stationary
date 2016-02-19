@@ -4,6 +4,10 @@
 #-------------------------------------------------------------------------#
 gcc -c -o stationary_test_main.o stationary_test_main.c -m32 -g
 gcc -c -o list.o list.c -m32 -g
+gcc -c -o vertex.o vertex.c -m32 -g
+gcc -c -o triangle.o triange.c -m32 -g
+gcc -c -o object.o object.c -m32 -g
+gcc -c -o cube.o cube.c -m32 -g
 
 #-------------------------------------------------------------------------#
 # PEOPS COMPONENTS                                                        #
