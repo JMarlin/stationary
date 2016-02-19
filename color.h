@@ -2,7 +2,7 @@
 #define COLOR_H
 
 typedef unsigned short color15;
-typedef unsigned long color15;
+typedef unsigned long color24;
 
 #define COLOR_CLIP15(c) (((c) > 0x1F) ? 0x1F : (c))
 #define RGB15(r, g, b) ((0x8000) | (COLOR_CLIP15(b) << 10) | (COLOR_CLIP15(g) << 5) | COLOR_CLIP15(r))
