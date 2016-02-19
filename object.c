@@ -8,7 +8,7 @@
 void Object_delete(Object *object) {
     	    
     List_delete(object->triangles, Triangle_deleter);
-    free(object);
+    free((void*)object);
 }
 
 int Object_add_triangle(Object* object, Vertex *v1, Vertex *v2, Vertex *v3) {
@@ -32,7 +32,7 @@ Object *Object_new() {
     if(!object)
         return object;
 	    
-    if(!(object->triangles.root = List_new())) {
+    if(!(object->triangles = List_new())) {
 		
 		free((void*)object);
 		return (Object*)0;
@@ -106,7 +106,7 @@ void Object_rot_y_global(Object* object, float angle) {
 void Object_rot_z_global(Object* object, float angle) {
     
     float rad_angle = DEG_TO_RAD(angle);
-    triangle *triangle;
+    Triangle *triangle;
     int j;
     float temp_x, temp_y;
         
