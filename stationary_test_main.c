@@ -125,7 +125,7 @@ void S_draw_tri_textured(unsigned short x0, unsigned short y0, unsigned short x1
 	S_upload_image_data(&texture[0], 0, 256, 8, 8);
 	
     //Poly, one color, flat shaded
-    GPUwriteData(GPU_DATA_CMD(PRIM_POLY, OPT_TME) << 24) | c);
+    GPUwriteData((GPU_DATA_CMD(PRIM_POLY, OPT_TME) << 24) | c);
     
     //Vertex 1
     GPUwriteData((y0 << 16) | x0);
