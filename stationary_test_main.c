@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <memory.h>
+#include "cube.h"
 #include "vertex.h"
 #include "color.h"
 #include "triangle.h"
