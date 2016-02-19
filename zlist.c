@@ -19,7 +19,7 @@ int ZList_add(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c) {
 	ScreenTriangle *new_screen_triangle, *current_screen_triangle;
 	int i;
 	
-	if(!(screen_triangle = ScreenTriangle_new(p1, p2, p3, c)))
+	if(!(new_screen_triangle = ScreenTriangle_new(p1, p2, p3, c)))
 	    return 0;
 		
 	i = 0;

@@ -13,7 +13,7 @@
 
 float focal_length = 0;
 
-void S_set_fov_angle(int angle) {
+void S_set_fov_angle(int fov_angle) {
 	
 	focal_length = 1.0 / (2.0 * tan(DEG_TO_RAD(fov_angle)/2.0));
 }
