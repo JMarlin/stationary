@@ -4,6 +4,6 @@
 #include "object.h"
 #include "color.h"
 
-Object *Cube_new(float s, color24 c);
+Object* Cube_new(float s, color24 c);
 
 #endif CUBE_H

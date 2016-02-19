@@ -3,7 +3,7 @@
 #include "vertex.h"
 #include "cube.h"
 
-Object *Cube_new(float s, color24 c) {
+Object* Cube_new(float s, color24 c) {
     
     Object* object = Object_new();
     int i;
