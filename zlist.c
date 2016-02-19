@@ -56,13 +56,15 @@ void ZList_render() {
 	ScreenTriangle *screen_triangle;
 	
 	List_for_each(zlist, screen_triangle, ScreenTriangle*)
-	    S_draw_tri_textured(
+	    S_draw_tri(
 			screen_triangle->points[0].x,
 			screen_triangle->points[0].y,
 			screen_triangle->points[1].x,
 			screen_triangle->points[1].y, 
 			screen_triangle->points[2].x,
 			screen_triangle->points[2].y, 
-			screen_triangle->c
+			RGB24_RED(screen_triangle->c),
+			RGB24_GRN(screen_triangle->c),
+			RGB24_BLU(screen_triangle->c)
 		);
 }
