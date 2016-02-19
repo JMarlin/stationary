@@ -6,7 +6,7 @@
 
 void Object_delete(Object *object) {
     	    
-    List_delete(object->tri_list, Triangle_deleter);
+    List_delete(object->triangles, Triangle_deleter);
     free(object);
 }
 
