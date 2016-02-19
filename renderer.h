@@ -5,6 +5,7 @@
 #include "color.h"
 #include "triangle.h"
 #include "object.h"
+#include "screentriangle.h"
 
 #define GPU_DATA_CMD(c, o) ((((c)&0x7)<<5) | ((o)&0x1F))
 #define PRIM_POLY 0x01

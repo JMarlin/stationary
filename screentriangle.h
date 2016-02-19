@@ -15,6 +15,6 @@ typedef struct ScreenTriangle {
 	color24 c;
 } ScreenTriangle;
 
-ScreenTriangle* ScreenTriangle_new(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c)
+ScreenTriangle* ScreenTriangle_new(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c);
 
 #endif //SCREENTRIANGLE_H
