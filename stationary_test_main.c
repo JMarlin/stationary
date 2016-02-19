@@ -3,6 +3,8 @@
 #include "cube.h"
 #include "object.h"
 #include "color.h"
+#include "screentriangle.h"
+#include "peops/externals.h"
 
 int main(int argc, char* argv[]) {
 
