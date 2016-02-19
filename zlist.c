@@ -28,7 +28,7 @@ int ZList_add(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c) {
 	i = 0;
 	List_for_each(zlist, current_screen_triangle, ScreenTriangle*) {
 				
-		if(current_screen_triangle->z > new_screen_triangle->z)
+		if(current_screen_triangle->z <= new_screen_triangle->z)
 		    break;
 			
 		i++;
