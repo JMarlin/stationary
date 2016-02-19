@@ -1,6 +1,7 @@
 #include "zlist.h"
 #include "screentriangle.h"
 #include "renderer.h"
+#include <stdio.h>
 
 List* zlist = (List*)0;
 
@@ -19,20 +20,25 @@ int ZList_add(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c) {
 	ScreenTriangle *new_screen_triangle, *current_screen_triangle;
 	int i;
 	
+	printf("Making new screen triangle\n");
 	if(!(new_screen_triangle = ScreenTriangle_new(p1, p2, p3, c)))
 	    return 0;
-		
+	
+	printf("Looking through list\n");	
 	i = 0;
 	List_for_each(zlist, current_screen_triangle, ScreenTriangle*) {
-		
+				
 		if(current_screen_triangle->z > new_screen_triangle->z)
 		    break;
 			
 		i++;
 	}
 	
+	printf("Adding triangle at index %i\n", i);
 	if(!List_add_at(zlist, i, (void*)new_screen_triangle))
 	    return 0;
+		
+	printf("Success\n");
 }
 
 void ZList_render() {
