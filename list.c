@@ -203,23 +203,34 @@ int List_add_at(List* list, int index, void* item) {
     if(!new_item)
         return 0;  
     
-	if(index >= list->count)
-        index = list->count - 1;  
-    
-	if(index < 0) 
-	    index = 0;
-    
-    while(index) {
-		
-        cur_item = cur_item->next;
-	    index--;
-	}
-    
 	new_item->value = item;
-    new_item->prev = cur_item->prev;
-	new_item->next = cur_item;
-	cur_item->prev = new_item;
 	
+	if(!list->root_item) {
+        
+        list->root_item = new_item;
+        list->current_item = new_item;
+		new_item->prev = (ListItem*)0;
+		new_item->next = (ListItem*)0;
+    } else {
+	
+		if(index >= list->count)
+			index = list->count - 1;  
+
+		if(index < 0) 
+			index = 0;
+
+		while(index) {
+			
+			cur_item = cur_item->next;
+			index--;
+		}
+
+		new_item->prev = cur_item->prev;
+		new_item->next = cur_item;
+		cur_item->prev = new_item;
+	}
+	
+	list->count++;
 	return 1;
 }
 

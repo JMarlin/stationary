@@ -20,11 +20,9 @@ int ZList_add(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c) {
 	ScreenTriangle *new_screen_triangle, *current_screen_triangle;
 	int i;
 	
-	printf("Making new screen triangle\n");
 	if(!(new_screen_triangle = ScreenTriangle_new(p1, p2, p3, c)))
 	    return 0;
-	
-	printf("Looking through list\n");	
+		
 	i = 0;
 	List_for_each(zlist, current_screen_triangle, ScreenTriangle*) {
 				
@@ -34,11 +32,10 @@ int ZList_add(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c) {
 		i++;
 	}
 	
-	printf("Adding triangle at index %i\n", i);
 	if(!List_add_at(zlist, i, (void*)new_screen_triangle))
 	    return 0;
-		
-	printf("Success\n");
+
+    return 1;
 }
 
 void ZList_render() {
