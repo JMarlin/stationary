@@ -448,13 +448,9 @@ int main(int argc, char* argv[]) {
 
     printf("Translating objects...");
     //Object_translate(cube1, 0.0, -6.0, 2.0);
-    Object_translate(cube2, 0.0, 2.0, 0.0);
+    Object_translate(cube2, 0.0, 0.0, 2.0);
 	printf("done\n");
 	
-	Object_render(cube2);  
-        
-        updateDisplay();
-	while(1);
     //Object_rot_y_local(cube, 45);
     //Object_rot_x_local(cube, 45);
     //Object_rot_z_local(cube, 45);

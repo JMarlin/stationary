@@ -5,6 +5,7 @@
 #include "mathhelpers.h"
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 void Object_delete(Object *object) {
     	    
@@ -49,6 +50,8 @@ void Object_translate(Object* object, float x, float y, float z) {
     Triangle *triangle;
     int      j;
     
+	printf("Updating object origin\n");
+	
     object->x += x;
     object->y += y;
     object->z += z;
@@ -57,6 +60,7 @@ void Object_translate(Object* object, float x, float y, float z) {
                 
         for(j = 0; j < 3; j++) {
         
+		    printf("Updating triangle 0x%08x vertex %d\n", (unsigned long)triangle, j);
             triangle->v[j].x += x;
             triangle->v[j].y += y;
             triangle->v[j].z += z;
