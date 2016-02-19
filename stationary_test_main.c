@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <memory.h>
+#include "list.h"
 #include "peops/externals.h"
 #include "peops/gpu.h"
 
@@ -60,17 +61,8 @@ typedef struct triangle {
     vertex v[3];
 } triangle;
 
-typedef struct node {
-    void *payload;
-    struct node *next;
-} node;
-
-typedef struct list {
-    node *root;
-} list;
-
 typedef struct object {
-    list tri_list;
+    List* tri_list;
     float x;
     float y;
     float z;
