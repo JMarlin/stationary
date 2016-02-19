@@ -447,8 +447,8 @@ int main(int argc, char* argv[]) {
     //SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
 
     printf("Translating objects...");
-    Object_translate(cube1, 0.0, -6.0, 2.0);
-    Object_translate(cube2, 0.0, 0.0, 2.0);
+    //Object_translate(cube1, 0.0, -6.0, 2.0);
+    //Object_translate(cube2, 0.0, 0.0, 2.0);
 	printf("done\n");
 	
 	Object_render(cube2);  
