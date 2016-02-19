@@ -60,11 +60,11 @@ void Object_translate(Object* object, float x, float y, float z) {
                 
         for(j = 0; j < 3; j++) {
         	
-			printf("x(%f) -> ", triangle->v[j].x);	    
+			printf("x(%f) + x(%f) = ", triangle->v[j].x, x);	    
             triangle->v[j].x += x; printf("x(%f)\n", triangle->v[j].x);
-			printf("y(%f) -> ", triangle->v[j].y);	    
+			printf("y(%f) + y(%f) = ", triangle->v[j].y, y);	    
             triangle->v[j].y += y; printf("y(%f)\n", triangle->v[j].y);
-			printf("z(%f) -> ", triangle->v[j].z);	    
+			printf("z(%f) + z(%f) = ", triangle->v[j].z, z);	    
             triangle->v[j].z += z; printf("z(%f)\n", triangle->v[j].z);
         }
     }
