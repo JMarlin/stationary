@@ -137,7 +137,7 @@ void S_draw_quad_textured(unsigned short x0, unsigned short y0, unsigned short x
 	S_upload_image_data(&texture[0], 0, 256, 8, 8);
 	
     //Poly, one color, flat shaded
-    GPUwriteData(0x2C << 24) | c);
+    GPUwriteData((0x2C << 24) | c);
     
     //Vertex 1
     GPUwriteData((y0 << 16) | x0);
