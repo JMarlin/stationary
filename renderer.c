@@ -175,12 +175,12 @@ void draw_triangle(Triangle* triangle) {
     normal_angle = acos(-cross[2]);
     
     //If the normal is facing away from the camera, don't bother drawing it
-    /*
+    
 	if(normal_angle >= (3*PI/4)) {
         
         return;
     }
-    */
+    
 	
     //Calculate the shading color based on the first vertex color and the
     //angle between the camera and the surface normal
