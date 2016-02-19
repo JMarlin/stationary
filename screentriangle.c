@@ -22,7 +22,7 @@ ScreenTriangle* ScreenTriangle_new(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint
 	
 	//Unrolled 'find max' loop 	
 	avg_z = (p1->z + p2->z + p3->z)/3;
-		
+		 
 	screen_triangle->points[0].x = p1->x;
 	screen_triangle->points[0].y = p1->y;
 	screen_triangle->points[0].z = p1->z;
