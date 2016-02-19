@@ -4,7 +4,7 @@
 #include "list.h"
 
 typedef struct Object {
-    List* tri_list;
+    List* triangles;
     float x;
     float y;
     float z;
