@@ -71,12 +71,14 @@ int main(int argc, char* argv[]) {
         Object_rot_x_local(cube2, 1);
         Object_rot_z_local(cube2, 1);
 
-        
+        printf("Clearing FB\n");
         S_clear_framebuffer(RGB15(0, 10, 31));
         
+		printf("Rendering cube\n");
         //Object_render(cube1);
         Object_render(cube2);  
         
+		printf("Drawing scene\n");
         S_commit_scene();
     }
 
