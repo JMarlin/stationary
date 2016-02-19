@@ -216,9 +216,9 @@ int List_add_at(List* list, int index, void* item) {
 	}
     
 	new_item->value = item;
-    new_item->prev_item = cur_item->prev_item;
-	new_item->next_item = cur_item;
-	cur_item->prev_item = new_item;
+    new_item->prev = cur_item->prev;
+	new_item->next = cur_item;
+	cur_item->prev = new_item;
 	
 	return 1;
 }
