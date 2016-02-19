@@ -15,6 +15,9 @@ typedef struct ScreenTriangle {
 	color24 c;
 } ScreenTriangle;
 
+
+void ScreenTriangle_deleter(void* screen_triangle);
+void ScreenTriangle_delete(ScreenTriangle* screen_triangle);
 ScreenTriangle* ScreenTriangle_new(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c);
 
 #endif //SCREENTRIANGLE_H
