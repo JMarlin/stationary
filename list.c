@@ -230,6 +230,8 @@ int List_add_at(List* list, int index, void* item) {
 		if(new_item->prev)
 		    new_item->prev->next = new_item;
 		cur_item->prev = new_item;
+		if(cur_item == list->root_item)
+		    list->root_item = new_item;
 	}
 	
 	list->count++;
