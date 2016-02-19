@@ -79,7 +79,8 @@ int main(int argc, char* argv[]) {
         Object_render(cube2);  
         
 		printf("Drawing scene\n");
-        S_commit_scene();
+        //S_commit_scene();
+		updateDisplay();
     }
 
     return 0;

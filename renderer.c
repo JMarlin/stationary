@@ -194,8 +194,8 @@ void draw_triangle(Triangle* triangle) {
     for(i = 0; i < 3; i++) 
         project(&(triangle->v[i]), &p[i]);
     
-	//S_draw_tri(p[0].x, p[0].y, p[1].x, p[1].y, p[2].x, p[2].y, (unsigned char)r & 0xFF, (unsigned char)g & 0xFF, (unsigned char)b * 0xFF);
-	ZList_add(&p[0], &p[1], &p[2], RGB24((unsigned char)r, (unsigned char)g, (unsigned char)b));
+	S_draw_tri(p[0].x, p[0].y, p[1].x, p[1].y, p[2].x, p[2].y, (unsigned char)r & 0xFF, (unsigned char)g & 0xFF, (unsigned char)b * 0xFF);
+	//ZList_add(&p[0], &p[1], &p[2], RGB24((unsigned char)r, (unsigned char)g, (unsigned char)b));
 }
 
 void clip_and_render(Triangle* triangle) {    
