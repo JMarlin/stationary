@@ -3,6 +3,7 @@
 #include "triangle.h"
 #include "list.h"
 #include <math.h>
+#include <stdlib.h>
 
 void Object_delete(Object *object) {
     	    
