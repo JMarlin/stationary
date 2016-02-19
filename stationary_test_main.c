@@ -468,7 +468,7 @@ int main(int argc, char* argv[]) {
         
         S_clear_framebuffer(0xFF00);
         
-        Object_render(cube1);
+        //Object_render(cube1);
         Object_render(cube2);  
         
         updateDisplay();
