@@ -5,6 +5,7 @@
 #include "color.h"
 #include "screentriangle.h"
 #include "peops/externals.h"
+#include "peops/gpu.h"
 
 int main(int argc, char* argv[]) {
 
