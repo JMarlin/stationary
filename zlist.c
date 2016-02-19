@@ -13,6 +13,7 @@ int ZList_init() {
 void ZList_clear() {
 	
 	List_delete(zlist, ScreenTriangle_deleter);
+	ZList_init();
 }
 
 int ZList_add(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c) {
@@ -36,7 +37,7 @@ int ZList_add(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c) {
 	
 	if(i == zlist->count) {
 		
-		printf("Adding triangle at end of list\n", i);
+		printf("Adding triangle at end of list\n");
 		if(!List_add(zlist, (void*)new_screen_triangle)) {
 			
 			printf("Fail\n");
