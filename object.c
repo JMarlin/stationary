@@ -133,7 +133,7 @@ void Object_rot_x_local(Object* object, float angle) {
     oldz = object->z;
     
     Object_translate(object, -oldx, -oldy, -oldz);
-    Oobject_rot_x_global(object, angle);
+    Object_rot_x_global(object, angle);
     Object_translate(object, oldx, oldy, oldz);
 }
 
