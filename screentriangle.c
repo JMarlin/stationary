@@ -32,9 +32,11 @@ ScreenTriangle* ScreenTriangle_new(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint
 	screen_triangle->points[0].x = p1->x;
 	screen_triangle->points[0].y = p1->y;
 	screen_triangle->points[0].z = p1->z;
+	
 	screen_triangle->points[1].x = p2->x;
 	screen_triangle->points[1].y = p2->y;
 	screen_triangle->points[1].z = p2->z;
+	
 	screen_triangle->points[2].x = p3->x;
 	screen_triangle->points[2].y = p3->y;
 	screen_triangle->points[2].z = p3->z;
