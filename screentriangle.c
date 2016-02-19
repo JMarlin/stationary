@@ -14,20 +14,14 @@ void ScreenTriangle_delete(ScreenTriangle* screen_triangle) {
 
 ScreenTriangle* ScreenTriangle_new(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c) {
 	
-	float max_z;
+	float avg_z;
 	ScreenTriangle *screen_triangle = (ScreenTriangle*)malloc(sizeof(ScreenTriangle));
 	
 	if(!screen_triangle)
 	    return screen_triangle;
 	
 	//Unrolled 'find max' loop 	
-	max_z = p1->z;
-	
-	if(p2->z > max_z)
-	    max_z = p2->z;
-		
-    if(p3->z > max_z)
-	    max_z = p3->z;
+	avg_z = (p1->z + p2->z + p3->z)/3;
 		
 	screen_triangle->points[0].x = p1->x;
 	screen_triangle->points[0].y = p1->y;
@@ -41,7 +35,7 @@ ScreenTriangle* ScreenTriangle_new(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint
 	screen_triangle->points[2].y = p3->y;
 	screen_triangle->points[2].z = p3->z;
 	
-	screen_triangle->z = max_z;
+	screen_triangle->z = avg_z;
 	screen_triangle->c = c;	
 	
 	return screen_triangle;
