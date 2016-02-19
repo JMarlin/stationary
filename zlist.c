@@ -25,6 +25,7 @@ int ZList_add(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c) {
 	if(!(new_screen_triangle = ScreenTriangle_new(p1, p2, p3, c)))
 	    return 0;
 	
+	/*
 	printf("Looking through list\n");	
 	i = 0;
 	List_for_each(zlist, current_screen_triangle, ScreenTriangle*) {
@@ -36,14 +37,14 @@ int ZList_add(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c) {
 	}
 	
 	if(i == zlist->count) {
-		
+	*/	
 		printf("Adding triangle at end of list\n");
 		if(!List_add(zlist, (void*)new_screen_triangle)) {
 			
 			printf("Fail\n");
 			return 0;
 		}
-	} else {
+	/*} else {
 	
 		printf("Adding triangle at index %i of %i\n", i, zlist->count);
 		if(!List_add_at(zlist, i, (void*)new_screen_triangle)) {
@@ -52,7 +53,7 @@ int ZList_add(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c) {
 			return 0;
 		}
 	}
-		
+	*/	
 	printf("Success\n");
 	return 1;
 }
@@ -62,16 +63,13 @@ void ZList_render() {
 	ScreenTriangle *screen_triangle;
 	
 	List_for_each(zlist, screen_triangle, ScreenTriangle*)
-	    S_draw_tri(
+	    S_draw_tri_textured(
 			screen_triangle->points[0].x,
 			screen_triangle->points[0].y,
 			screen_triangle->points[1].x,
 			screen_triangle->points[1].y, 
 			screen_triangle->points[2].x,
 			screen_triangle->points[2].x, 
-			0xFF,
-			0xFF,
-			0xFF
-			//screen_triangle->c
+			screen_triangle->c
 		);
 }
