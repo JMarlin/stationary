@@ -1,4 +1,4 @@
-#include "renderer.c"
+#include "renderer.h"
 #include <math.h>
 #include "cube.h"
 #include "vertex.h"
