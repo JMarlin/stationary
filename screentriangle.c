@@ -36,7 +36,7 @@ ScreenTriangle* ScreenTriangle_new(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint
 	if(p3->z < min_z)
 	    min_z = p3->z;
 	 	
-	avg_z = (min_z + max_z)>>2;
+	avg_z = (min_z + max_z)/2;
 		 
 	screen_triangle->points[0].x = p1->x;
 	screen_triangle->points[0].y = p1->y;
