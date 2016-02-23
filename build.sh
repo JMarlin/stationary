@@ -15,14 +15,14 @@ gcc -c -o renderer.o renderer.c -m32 -g
 #-------------------------------------------------------------------------#
 # PEOPS COMPONENTS                                                        #
 #-------------------------------------------------------------------------#
-gcc -c `pkg-config --cflags gtk+-3.0` -o callbacks.o  peops/callbacks.c `pkg-config --libs gtk+-3.0` -m32 -g 
-gcc -c -o cfg.o peops/cfg.c -m32 -g
+#gcc -c `pkg-config --cflags gtk+-3.0` -o callbacks.o  peops/callbacks.c `pkg-config --libs gtk+-3.0` -m32 -g 
+gcc -c -o cfg.o peops/cfg.c $(sdl2-config --cflags) -m32 -g
 #gcc -c -o conf.o peops/conf.c #IGNORING GTK COMPONENT
 gcc -c -o draw.o peops/draw.c $(sdl2-config --cflags) -m32 -g
 gcc -c -o DrawString.o peops/DrawString.c -m32 -g 
-gcc -c -o fps.o peops/fps.c -m32 -g
+gcc -c -o fps.o peops/fps.c $(sdl2-config --cflags) -m32 -g
 #gcc -c -o fpsewp.o  peops/fpsewp.c -I ./peops/fpse -m32
-gcc -c -o gpu.o peops/gpu.c -m32 -g
+gcc -c -o gpu.o peops/gpu.c $(sdl2-config --cflags) -m32 -g
 nasm -o hq2x16.o -felf32 peops/hq2x16.asm -I ./peops/ -w-all
 nasm -o hq2x32.o -felf32 peops/hq2x32.asm -I ./peops/ -w-all
 nasm -o hq3x16.o -felf32 peops/hq3x16.asm -I ./peops/ -w-all
