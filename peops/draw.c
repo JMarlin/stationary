@@ -2264,6 +2264,7 @@ if(SDL_InitSubSystem(SDL_INIT_VIDEO)<0)
    }
 
 //display = SDL_SetVideoMode(iResX,iResY,depth,sdl_mask);
+sdl_window = SDL_CreateWindow("Stationary", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, iResX, iResY, !iWindowMode*SDL_WINDOW_FULLSCREEN)
 display = SDL_SetVideoMode(iResX,iResY,depth,!iWindowMode*SDL_FULLSCREEN|sdl_mask);
 
 Ximage16= SDL_CreateRGBSurfaceFrom((void*)psxVub, 1024,512,16,2048 ,0x1f,0x1f<<5,0x1f<<10,0);
@@ -2276,10 +2277,6 @@ XFimage= SDL_CreateRGBSurface(sdl_mask,170,15,depth,0x00ff0000,0x0000ff00,0x0000
 iColDepth=depth;
 //memset(XFimage->pixels,255,170*15*4);//really needed???
 //memset(Ximage->pixels,0,ResX*ResY*4);
-
-if(pCaptionText)
-      SDL_WM_SetCaption(pCaptionText,NULL);
- else SDL_WM_SetCaption("FPSE Display - P.E.Op.S SoftSDL PSX Gpu",NULL);
 
 }
 
