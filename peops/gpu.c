@@ -152,17 +152,8 @@ const  unsigned char version  = 1;    // do not touch - library for PSEmu 1.x
 const  unsigned char revision = 1;
 const  unsigned char build    = 18;   // increase that with each version
 
-#ifdef _WINDOWS
-static char *libraryName      = "P.E.Op.S. Soft Driver";
-#else
-#ifndef _SDL
-static char *libraryName      = "P.E.Op.S. SoftX Driver";
-static char *libraryInfo      = "P.E.Op.S. SoftX Driver V1.18\nCoded by Pete Bernert and the P.E.Op.S. team\n";
-#else
 static char *libraryName      = "P.E.Op.S. SoftSDL Driver";
 static char *libraryInfo      = "P.E.Op.S. SoftSDL Driver V1.18\nCoded by Pete Bernert and the P.E.Op.S. team\n";
-#endif
-#endif
 
 static char *PluginAuthor     = "Pete Bernert and the P.E.Op.S. team";
  
