@@ -18,7 +18,7 @@ gcc -c -o renderer.o renderer.c -m32 -g
 gcc -c `pkg-config --cflags gtk+-3.0` -o callbacks.o  peops/callbacks.c `pkg-config --libs gtk+-3.0` -m32 -g 
 gcc -c -o cfg.o peops/cfg.c -m32 -g
 #gcc -c -o conf.o peops/conf.c #IGNORING GTK COMPONENT
-gcc -c -o draw.o peops/draw.c -m32 -g
+gcc -c -o draw.o peops/draw.c $(sdl2-config --cflags) -m32 -g
 gcc -c -o DrawString.o peops/DrawString.c -m32 -g 
 gcc -c -o fps.o peops/fps.c -m32 -g
 #gcc -c -o fpsewp.o  peops/fpsewp.c -I ./peops/fpse -m32
@@ -40,4 +40,4 @@ gcc -c -o zn.o peops/zn.c -m32 -g
 #-------------------------------------------------------------------------#
 # LINK                                                                    #
 #-------------------------------------------------------------------------#
-gcc -o stationary_test *.o $(pkg-config --libs x11) -lm -m32  -g #ld -melf_i386
+gcc -o stationary_test *.o $(sdl2-config --libs) -lm -m32  -g #ld -melf_i386
