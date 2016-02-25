@@ -127,6 +127,9 @@ int            iDebugMode=0;
 int            iFVDisplay=0;
 PSXPoint_t     ptCursorPoint[8];
 unsigned short usCursorActive=0;
+SDL_Window *sdl_window;
+SDL_Renderer *renderer;
+SDL_Texture *display;
 
 unsigned int   LUT16to32[65536];
 unsigned int   RGBtoYUV[65536];
@@ -2230,54 +2233,47 @@ SDL_Surface *display,*XFimage,*XPimage=NULL;
 SDL_Surface *Ximage16,*Ximage24;
 
 //static Uint32 sdl_mask=SDL_HWSURFACE|SDL_HWACCEL;/*place or remove some flags*/
-Uint32 sdl_mask=SDL_HWSURFACE;
 SDL_Rect rectdst,rectsrc;
 
+void DestroyDisplay(void) {
+	
+	if(display) {
 
+		if(Ximage16) SDL_FreeSurface(Ximage16);
+		if(Ximage24) SDL_FreeSurface(Ximage24);
 
-void DestroyDisplay(void)
-{
-if(display){
+		if(XFimage) SDL_FreeSurface(XFimage);
 
-if(Ximage16) SDL_FreeSurface(Ximage16);
-if(Ximage24) SDL_FreeSurface(Ximage24);
+		SDL_FreeTexture(display);//the display is also a surface in SDL
+		SDL_DestroyRenderer(renderer);
+		SDL_DestroyWindow(sdl_window);
+	}
 
-if(XFimage) SDL_FreeSurface(XFimage);
-
-SDL_FreeSurface(display);//the display is also a surface in SDL
+    SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
-SDL_QuitSubSystem(SDL_INIT_VIDEO);
-}
+
 void SetDisplay(void){
-if(iWindowMode)
-display = SDL_SetVideoMode(iResX,iResY,depth,sdl_mask);
-else display = SDL_SetVideoMode(iResX,iResY,depth,SDL_FULLSCREEN|sdl_mask);
+
+    if(iWindowMode)
+        display = SDL_SetVideoMode(iResX,iResY,depth,sdl_mask);
+    else
+	    display = SDL_SetVideoMode(iResX,iResY,depth,SDL_FULLSCREEN|sdl_mask);
 }
 
-void CreateDisplay(void)
-{
+void CreateDisplay(void) {
 
-if(SDL_InitSubSystem(SDL_INIT_VIDEO)<0)
-   {
+	if(SDL_InitSubSystem(SDL_INIT_VIDEO)<0) {
 	  fprintf (stderr,"(x) Failed to Init SDL!!!\n");
 	  return;
    }
 
-//display = SDL_SetVideoMode(iResX,iResY,depth,sdl_mask);
-sdl_window = SDL_CreateWindow("Stationary", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, iResX, iResY, !iWindowMode*SDL_WINDOW_FULLSCREEN)
-display = SDL_SetVideoMode(iResX,iResY,depth,!iWindowMode*SDL_FULLSCREEN|sdl_mask);
-
-Ximage16= SDL_CreateRGBSurfaceFrom((void*)psxVub, 1024,512,16,2048 ,0x1f,0x1f<<5,0x1f<<10,0);
-Ximage24= SDL_CreateRGBSurfaceFrom((void*)psxVub, 1024*2/3,512 ,24,2048 ,0xFF0000,0xFF00,0xFF,0);
-
-
-
-XFimage= SDL_CreateRGBSurface(sdl_mask,170,15,depth,0x00ff0000,0x0000ff00,0x000000ff,0);
-
-iColDepth=depth;
-//memset(XFimage->pixels,255,170*15*4);//really needed???
-//memset(Ximage->pixels,0,ResX*ResY*4);
-
+	sdl_window = SDL_CreateWindow("Stationary", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, iResX, iResY, !iWindowMode*SDL_WINDOW_FULLSCREEN_DESKTOP)
+	renderer = SDL_CreateRenderer(sdl_window, -1, 0);
+	display = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, 320, 240);
+	Ximage16 = SDL_CreateRGBSurfaceFrom((void*)psxVub, 1024,512,16,2048 ,0x1f,0x1f<<5,0x1f<<10,0);
+	Ximage24 = SDL_CreateRGBSurfaceFrom((void*)psxVub, 1024*2/3,512 ,24,2048 ,0xFF0000,0xFF00,0xFF,0);
+	XFimage = SDL_CreateRGBSurface(sdl_mask,170,15,depth,0x00ff0000,0x0000ff00,0x000000ff,0);
+	iColDepth=depth;
 }
 
 ////////////////////////////////////////////////////////////////////////
