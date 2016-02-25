@@ -19,6 +19,9 @@
 //*************************************************************************//
 // History of changes:
 //
+// 2016/02/25 - JMarlin
+// - Complete SDL2 overhaul
+//
 // 2008/05/17 - Pete  
 // - added "visual rumble" stuff to buffer swap func
 //
@@ -150,45 +153,52 @@ void StretchedBlit3x(void);
 // HQ Initialize Lookup Table
 ////////////////////////////////////////////////////////////////////////
 
-int InitLUTs(void)
-{
-  int i, j, k, r, g, b, Y, u, v;
-  int nMMXsupport = 0;
-  for (i=0; i<65536; i++)
-    LUT16to32[i] = ((i & 0xF800) << 8) + ((i & 0x07E0) << 5) + ((i & 0x001F) << 3);
+int InitLUTs(void) {
 
-  for (i=0; i<32; i++)
-  for (j=0; j<64; j++)
-  for (k=0; k<32; k++)
-  {
-    r = i << 3;
-    g = j << 2;
-    b = k << 3;
-    Y = (r + g + b) >> 2;
-    u = 128 + ((r - b) >> 2);
-    v = 128 + ((-r + 2*g -b)>>3);
-    RGBtoYUV[ (i << 11) + (j << 5) + k ] = (Y<<16) + (u<<8) + v;
-  }
+	int i, j, k, r, g, b, Y, u, v;
+	int nMMXsupport = 0;
 
-// This part of the function isn't really needed
-// Could just snip this and make it return void
-// and make MMX detection it's own function
+	for(i=0; i<65536; i++)
+		LUT16to32[i] = ((i & 0xF800) << 8) + ((i & 0x07E0) << 5) + ((i & 0x001F) << 3);
 
-#ifdef __GNUC__
- __asm__ __volatile__ ("movl $1, %%eax":::"eax");
- __asm__ __volatile__ ("cpuid");
- __asm__ __volatile__ ( "and $0x00800000, %%edx":::"edx");
- __asm__ __volatile__ ( "movl %%edx, %0": "=g" (nMMXsupport));
-#else
-#define cpuid _asm _emit 0x0f _asm _emit 0xa2 
-  __asm {
-    mov  eax, 1
-    cpuid
-    and  edx, 0x00800000
-    mov  nMMXsupport, edx
-  };
-#endif
-  return nMMXsupport;
+	for(i=0; i<32; i++)
+		for(j=0; j<64; j++)
+			for(k=0; k<32; k++) {
+				
+				r = i << 3;
+				g = j << 2;
+				b = k << 3;
+				Y = (r + g + b) >> 2;
+				u = 128 + ((r - b) >> 2);
+				v = 128 + ((-r + 2*g -b)>>3);
+				RGBtoYUV[(i << 11) + (j << 5) + k] = (Y<<16) + (u<<8) + v;
+			}
+
+	// This part of the function isn't really needed
+	// Could just snip this and make it return void
+	// and make MMX detection it's own function
+
+	#ifdef __GNUC__
+
+	__asm__ __volatile__ ("movl $1, %%eax":::"eax");
+	__asm__ __volatile__ ("cpuid");
+	__asm__ __volatile__ ( "and $0x00800000, %%edx":::"edx");
+	__asm__ __volatile__ ( "movl %%edx, %0": "=g" (nMMXsupport));
+
+	#else
+
+	#define cpuid _asm _emit 0x0f _asm _emit 0xa2 
+
+	__asm {
+		mov  eax, 1
+		cpuid
+		and  edx, 0x00800000
+		mov  nMMXsupport, edx
+	};
+
+	#endif
+
+	return nMMXsupport;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -200,28 +210,53 @@ void *         pSaIBigBuff=NULL;
 
 #define GET_RESULT(A, B, C, D) ((A != C || A != D) - (B != C || B != D))
 
-static __inline int GetResult1(DWORD A, DWORD B, DWORD C, DWORD D, DWORD E)
-{
- int x = 0;
- int y = 0;
- int r = 0;
- if (A == C) x+=1; else if (B == C) y+=1;
- if (A == D) x+=1; else if (B == D) y+=1;
- if (x <= 1) r+=1;
- if (y <= 1) r-=1;
- return r;
+static __inline int GetResult1(DWORD A, DWORD B, DWORD C, DWORD D, DWORD E) {
+	
+	int x = 0;
+	int y = 0;
+	int r = 0;
+	
+	if(A == C)
+		x+=1;
+	else if(B == C)
+	    y+=1;
+		
+	if(A == D)
+	    x+=1; 
+	else if(B == D)
+		y+=1;
+	
+	if(x <= 1)
+		r+=1;
+		
+	if(y <= 1)
+		r-=1;
+		
+	return r;
 }
 
-static __inline int GetResult2(DWORD A, DWORD B, DWORD C, DWORD D, DWORD E)
-{
- int x = 0;
- int y = 0;
- int r = 0;
- if (A == C) x+=1; else if (B == C) y+=1;
- if (A == D) x+=1; else if (B == D) y+=1;
- if (x <= 1) r-=1;
- if (y <= 1) r+=1;
- return r;
+static __inline int GetResult2(DWORD A, DWORD B, DWORD C, DWORD D, DWORD E) {
+	
+	int x = 0;
+	int y = 0;
+	int r = 0;
+	
+	if(A == C)
+		x+=1;
+	else if(B == C)
+		y+=1;
+		
+	if(A == D)
+		x+=1;
+	else if(B == D)
+		y+=1;
+		
+	if(x <= 1)
+		r-=1;
+	if(y <= 1)
+		r+=1;
+		
+	return r;
 }
 
 #define colorMask8     0x00FEFEFE
@@ -234,350 +269,388 @@ static __inline int GetResult2(DWORD A, DWORD B, DWORD C, DWORD D, DWORD E)
 	+ ((((A & qlowpixelMask8) + (B & qlowpixelMask8) + (C & qlowpixelMask8) + (D & qlowpixelMask8)) >> 2) & qlowpixelMask8))))
 
 
-void Super2xSaI_ex8(unsigned char *srcPtr, DWORD srcPitch,
-	            unsigned char  *dstBitmap, int width, int height)
-{
- DWORD dstPitch        = srcPitch<<1;
- DWORD srcPitchHalf    = srcPitch>>1;
- int   finWidth        = srcPitch>>2;
- DWORD line;
- DWORD *dP;
- DWORD *bP;
- int iXA,iXB,iXC,iYA,iYB,iYC,finish;
- DWORD color4, color5, color6;
- DWORD color1, color2, color3;
- DWORD colorA0, colorA1, colorA2, colorA3,
-       colorB0, colorB1, colorB2, colorB3,
-       colorS1, colorS2;
- DWORD product1a, product1b,
-       product2a, product2b;
+void Super2xSaI_ex8(unsigned char *srcPtr, DWORD srcPitch, unsigned char  *dstBitmap, int width, int height) {
+	
+	DWORD dstPitch        = srcPitch<<1;
+	DWORD srcPitchHalf    = srcPitch>>1;
+	int   finWidth        = srcPitch>>2;
+	DWORD line;
+	DWORD *dP;
+	DWORD *bP;
+	int iXA,iXB,iXC,iYA,iYB,iYC,finish;
+	DWORD color4, color5, color6;
+	DWORD color1, color2, color3;
+	DWORD colorA0, colorA1, colorA2, colorA3,
+		colorB0, colorB1, colorB2, colorB3,
+		colorS1, colorS2;
+	DWORD product1a, product1b,
+		product2a, product2b;
 
- line = 0;
+	line = 0;
 
-  {
-   for (; height; height-=1)
-	{
-     bP = (DWORD *)srcPtr;
-	 dP = (DWORD *)(dstBitmap + line*dstPitch);
-     for (finish = width; finish; finish -= 1 )
-      {
-//---------------------------------------    B1 B2
-//                                         4  5  6 S2
-//                                         1  2  3 S1
-//                                           A1 A2
-       if(finish==finWidth) iXA=0;
-       else                 iXA=1;
-       if(finish>4) {iXB=1;iXC=2;}
-       else
-       if(finish>3) {iXB=1;iXC=1;}
-       else         {iXB=0;iXC=0;}
-       if(line==0)  {iYA=0;}
-       else         {iYA=finWidth;}
-       if(height>4) {iYB=finWidth;iYC=srcPitchHalf;}
-       else
-       if(height>3) {iYB=finWidth;iYC=finWidth;}
-       else         {iYB=0;iYC=0;}
+  
+	for(; height; height-=1) {
+		
+		bP = (DWORD *)srcPtr;
+		dP = (DWORD *)(dstBitmap + line*dstPitch);
 
-       colorB0 = *(bP- iYA - iXA);
-       colorB1 = *(bP- iYA);
-       colorB2 = *(bP- iYA + iXB);
-       colorB3 = *(bP- iYA + iXC);
+		for(finish = width; finish; finish -= 1 ) {
 
-       color4 = *(bP  - iXA);
-       color5 = *(bP);
-       color6 = *(bP  + iXB);
-       colorS2 = *(bP + iXC);
+			//---------------------------------------    B1 B2
+			//                                         4  5  6 S2
+			//                                         1  2  3 S1
+			//                                           A1 A2
+			
+			if(finish==finWidth)
+				iXA=0;
+			else
+				iXA=1;
 
-       color1 = *(bP  + iYB  - iXA);
-       color2 = *(bP  + iYB);
-       color3 = *(bP  + iYB  + iXB);
-       colorS1= *(bP  + iYB  + iXC);
+			if(finish>4) {
 
-       colorA0 = *(bP + iYC - iXA);
-       colorA1 = *(bP + iYC);
-       colorA2 = *(bP + iYC + iXB);
-       colorA3 = *(bP + iYC + iXC);
+				iXB=1;iXC=2;
+			} else if(finish>3) {
 
-       if (color2 == color6 && color5 != color3)
-        {
-         product2b = product1b = color2;
-        }
-       else
-       if (color5 == color3 && color2 != color6)
-        {
-         product2b = product1b = color5;
-        }
-       else
-       if (color5 == color3 && color2 == color6)
-        {
-         register int r = 0;
+				iXB=1;
+				iXC=1;
+			} else {
 
-         r += GET_RESULT ((color6&0x00ffffff), (color5&0x00ffffff), (color1&0x00ffffff),  (colorA1&0x00ffffff));
-         r += GET_RESULT ((color6&0x00ffffff), (color5&0x00ffffff), (color4&0x00ffffff),  (colorB1&0x00ffffff));
-         r += GET_RESULT ((color6&0x00ffffff), (color5&0x00ffffff), (colorA2&0x00ffffff), (colorS1&0x00ffffff));
-         r += GET_RESULT ((color6&0x00ffffff), (color5&0x00ffffff), (colorB2&0x00ffffff), (colorS2&0x00ffffff));
+				iXB=0;
+				iXC=0;
+			}
+			
+			if(line==0)
+				iYA=0;
+			else
+			    iYA=finWidth;
+				
+			if(height>4) {
+				
+				iYB=finWidth;
+				iYC=srcPitchHalf;
+			} else if(height>3) {
+				
+				iYB=finWidth;
+				iYC=finWidth;
+			} else {
+				
+				iYB=0;
+				iYC=0;
+		    }
 
-         if (r > 0)
-          product2b = product1b = color6;
-         else
-         if (r < 0)
-          product2b = product1b = color5;
-         else
-          {
-           product2b = product1b = INTERPOLATE8(color5, color6);
-          }
-        }
-       else
-        {
-         if (color6 == color3 && color3 == colorA1 && color2 != colorA2 && color3 != colorA0)
-             product2b = Q_INTERPOLATE8 (color3, color3, color3, color2);
-         else
-         if (color5 == color2 && color2 == colorA2 && colorA1 != color3 && color2 != colorA3)
-             product2b = Q_INTERPOLATE8 (color2, color2, color2, color3);
-         else
-             product2b = INTERPOLATE8 (color2, color3);
+			colorB0 = *(bP- iYA - iXA);
+			colorB1 = *(bP- iYA);
+			colorB2 = *(bP- iYA + iXB);
+			colorB3 = *(bP- iYA + iXC);
 
-         if (color6 == color3 && color6 == colorB1 && color5 != colorB2 && color6 != colorB0)
-             product1b = Q_INTERPOLATE8 (color6, color6, color6, color5);
-         else
-         if (color5 == color2 && color5 == colorB2 && colorB1 != color6 && color5 != colorB3)
-             product1b = Q_INTERPOLATE8 (color6, color5, color5, color5);
-         else
-             product1b = INTERPOLATE8 (color5, color6);
-        }
+			color4 = *(bP  - iXA);
+			color5 = *(bP);
+			color6 = *(bP  + iXB);
+			colorS2 = *(bP + iXC);
 
-       if (color5 == color3 && color2 != color6 && color4 == color5 && color5 != colorA2)
-        product2a = INTERPOLATE8(color2, color5);
-       else
-       if (color5 == color1 && color6 == color5 && color4 != color2 && color5 != colorA0)
-        product2a = INTERPOLATE8(color2, color5);
-       else
-        product2a = color2;
+			color1 = *(bP  + iYB  - iXA);
+			color2 = *(bP  + iYB);
+			color3 = *(bP  + iYB  + iXB);
+			colorS1= *(bP  + iYB  + iXC);
 
-       if (color2 == color6 && color5 != color3 && color1 == color2 && color2 != colorB2)
-        product1a = INTERPOLATE8(color2, color5);
-       else
-       if (color4 == color2 && color3 == color2 && color1 != color5 && color2 != colorB0)
-        product1a = INTERPOLATE8(color2, color5);
-       else
-        product1a = color5;
+			colorA0 = *(bP + iYC - iXA);
+			colorA1 = *(bP + iYC);
+			colorA2 = *(bP + iYC + iXB);
+			colorA3 = *(bP + iYC + iXC);
 
-       *dP=product1a;
-       *(dP+1)=product1b;
-       *(dP+(srcPitchHalf))=product2a;
-       *(dP+1+(srcPitchHalf))=product2b;
+			if(color2 == color6 && color5 != color3) {
+				
+				product2b = product1b = color2;
+			} else if(color5 == color3 && color2 != color6) {
+				
+				product2b = product1b = color5;
+			} else if(color5 == color3 && color2 == color6) {
+			
+				register int r = 0;
 
-       bP += 1;
-       dP += 2;
-      }//end of for ( finish= width etc..)
+				r += GET_RESULT ((color6&0x00ffffff), (color5&0x00ffffff), (color1&0x00ffffff),  (colorA1&0x00ffffff));
+				r += GET_RESULT ((color6&0x00ffffff), (color5&0x00ffffff), (color4&0x00ffffff),  (colorB1&0x00ffffff));
+				r += GET_RESULT ((color6&0x00ffffff), (color5&0x00ffffff), (colorA2&0x00ffffff), (colorS1&0x00ffffff));
+				r += GET_RESULT ((color6&0x00ffffff), (color5&0x00ffffff), (colorB2&0x00ffffff), (colorS2&0x00ffffff));
 
-     line += 2;
-     srcPtr += srcPitch;
-	}; //endof: for (; height; height--)
-  }
+				if(r > 0)
+					product2b = product1b = color6;
+				else if(r < 0)
+					product2b = product1b = color5;
+				else
+					product2b = product1b = INTERPOLATE8(color5, color6);
+			} else {
+				
+				if(color6 == color3 && color3 == colorA1 && color2 != colorA2 && color3 != colorA0)
+					product2b = Q_INTERPOLATE8 (color3, color3, color3, color2);
+				else if(color5 == color2 && color2 == colorA2 && colorA1 != color3 && color2 != colorA3)
+					product2b = Q_INTERPOLATE8 (color2, color2, color2, color3);
+				else
+					product2b = INTERPOLATE8 (color2, color3);
+
+				if(color6 == color3 && color6 == colorB1 && color5 != colorB2 && color6 != colorB0)
+					product1b = Q_INTERPOLATE8 (color6, color6, color6, color5);
+				else if(color5 == color2 && color5 == colorB2 && colorB1 != color6 && color5 != colorB3)
+					product1b = Q_INTERPOLATE8 (color6, color5, color5, color5);
+				else
+					product1b = INTERPOLATE8 (color5, color6);
+			}
+
+			if(color5 == color3 && color2 != color6 && color4 == color5 && color5 != colorA2)
+				product2a = INTERPOLATE8(color2, color5);
+			else if(color5 == color1 && color6 == color5 && color4 != color2 && color5 != colorA0)
+				product2a = INTERPOLATE8(color2, color5);
+			else
+				product2a = color2;
+
+			if (color2 == color6 && color5 != color3 && color1 == color2 && color2 != colorB2)
+				product1a = INTERPOLATE8(color2, color5);
+			else if(color4 == color2 && color3 == color2 && color1 != color5 && color2 != colorB0)
+				product1a = INTERPOLATE8(color2, color5);
+			else
+				product1a = color5;
+
+			*dP=product1a;
+			*(dP+1)=product1b;
+			*(dP+(srcPitchHalf))=product2a;
+			*(dP+1+(srcPitchHalf))=product2b;
+
+			bP += 1;
+			dP += 2;
+		}//end of for ( finish= width etc..)
+
+		line += 2;
+		srcPtr += srcPitch;
+	} //endof: for (; height; height--)
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-void Std2xSaI_ex8(unsigned char *srcPtr, DWORD srcPitch,
-                  unsigned char *dstBitmap, int width, int height)
-{
- DWORD dstPitch        = srcPitch<<1;
- DWORD srcPitchHalf    = srcPitch>>1;
- int   finWidth        = srcPitch>>2;
- DWORD line;
- DWORD *dP;
- DWORD *bP;
- int iXA,iXB,iXC,iYA,iYB,iYC,finish;
+void Std2xSaI_ex8(unsigned char *srcPtr, DWORD srcPitch, unsigned char *dstBitmap, int width, int height) {
+	
+	DWORD dstPitch        = srcPitch<<1;
+	DWORD srcPitchHalf    = srcPitch>>1;
+	int   finWidth        = srcPitch>>2;
+	DWORD line;
+	DWORD *dP;
+	DWORD *bP;
+	int iXA,iXB,iXC,iYA,iYB,iYC,finish;
+	DWORD colorA, colorB;
+	DWORD colorC, colorD,
+	colorE, colorF, colorG, colorH,
+	colorI, colorJ, colorK, colorL,
+	colorM, colorN, colorO, colorP;
+	DWORD product, product1, product2;
 
- DWORD colorA, colorB;
- DWORD colorC, colorD,
-       colorE, colorF, colorG, colorH,
-       colorI, colorJ, colorK, colorL,
-       colorM, colorN, colorO, colorP;
- DWORD product, product1, product2;
+	line = 0;
 
- line = 0;
+	
+	for(; height; height-=1) {
+		
+		bP = (DWORD *)srcPtr;
+		dP = (DWORD *)(dstBitmap + line*dstPitch);
+		
+		for(finish = width; finish; finish -= 1 ) {
+			
+		//---------------------------------------
+		// Map of the pixels:                    I|E F|J
+		//                                       G|A B|K
+		//                                       H|C D|L
+		//                                       M|N O|P
+		
+		if(finish == finWidth)
+			iXA=0;
+		else
+			iXA=1;
+		
+		if(finish > 4) {
+			
+			iXB=1;
+			iXC=2;
+			
+		} else if(finish > 3) {
+			
+			iXB = 1;
+			iXC = 1;
+		} else {
+			
+			iXB = 0;
+			iXC = 0;
+		}
+		
+		if(line == 0)	
+			iYA = 0;
+		else 
+			iYA = finWidth;
+			
+		if(height > 4) {
+			
+			iYB=finWidth;
+			iYC=srcPitchHalf;
+		} else if(height > 3) {
+			
+			iYB = finWidth;
+			iYC = finWidth;
+		} else {
+			
+			iYB=0;
+			iYC=0;
+		}
 
-  {
-   for (; height; height-=1)
-	{
-     bP = (DWORD *)srcPtr;
-	 dP = (DWORD *)(dstBitmap + line*dstPitch);
-     for (finish = width; finish; finish -= 1 )
-      {
-//---------------------------------------
-// Map of the pixels:                    I|E F|J
-//                                       G|A B|K
-//                                       H|C D|L
-//                                       M|N O|P
-       if(finish==finWidth) iXA=0;
-       else                 iXA=1;
-       if(finish>4) {iXB=1;iXC=2;}
-       else
-       if(finish>3) {iXB=1;iXC=1;}
-       else         {iXB=0;iXC=0;}
-       if(line==0)  {iYA=0;}
-       else         {iYA=finWidth;}
-       if(height>4) {iYB=finWidth;iYC=srcPitchHalf;}
-       else
-       if(height>3) {iYB=finWidth;iYC=finWidth;}
-       else         {iYB=0;iYC=0;}
+		colorI = *(bP- iYA - iXA);
+		colorE = *(bP- iYA);
+		colorF = *(bP- iYA + iXB);
+		colorJ = *(bP- iYA + iXC);
 
-       colorI = *(bP- iYA - iXA);
-       colorE = *(bP- iYA);
-       colorF = *(bP- iYA + iXB);
-       colorJ = *(bP- iYA + iXC);
+		colorG = *(bP  - iXA);
+		colorA = *(bP);
+		colorB = *(bP  + iXB);
+		colorK = *(bP + iXC);
 
-       colorG = *(bP  - iXA);
-       colorA = *(bP);
-       colorB = *(bP  + iXB);
-       colorK = *(bP + iXC);
+		colorH = *(bP  + iYB  - iXA);
+		colorC = *(bP  + iYB);
+		colorD = *(bP  + iYB  + iXB);
+		colorL = *(bP  + iYB  + iXC);
 
-       colorH = *(bP  + iYB  - iXA);
-       colorC = *(bP  + iYB);
-       colorD = *(bP  + iYB  + iXB);
-       colorL = *(bP  + iYB  + iXC);
-
-       colorM = *(bP + iYC - iXA);
-       colorN = *(bP + iYC);
-       colorO = *(bP + iYC + iXB);
-       colorP = *(bP + iYC + iXC);
+		colorM = *(bP + iYC - iXA);
+		colorN = *(bP + iYC);
+		colorO = *(bP + iYC + iXB);
+		colorP = *(bP + iYC + iXC);
 
 
-       if((colorA == colorD) && (colorB != colorC))
-        {
-         if(((colorA == colorE) && (colorB == colorL)) ||
-            ((colorA == colorC) && (colorA == colorF) &&
-             (colorB != colorE) && (colorB == colorJ)))
-          {
-           product = colorA;
-          }
-         else
-          {
-           product = INTERPOLATE8(colorA, colorB);
-          }
+		if((colorA == colorD) && (colorB != colorC))
+		{
+		if(((colorA == colorE) && (colorB == colorL)) ||
+		((colorA == colorC) && (colorA == colorF) &&
+		(colorB != colorE) && (colorB == colorJ)))
+		{
+		product = colorA;
+		}
+		else
+		{
+		product = INTERPOLATE8(colorA, colorB);
+		}
 
-         if(((colorA == colorG) && (colorC == colorO)) ||
-            ((colorA == colorB) && (colorA == colorH) &&
-             (colorG != colorC) && (colorC == colorM)))
-          {
-           product1 = colorA;
-          }
-         else
-          {
-           product1 = INTERPOLATE8(colorA, colorC);
-          }
-         product2 = colorA;
-        }
-       else
-       if((colorB == colorC) && (colorA != colorD))
-        {
-         if(((colorB == colorF) && (colorA == colorH)) ||
-            ((colorB == colorE) && (colorB == colorD) &&
-             (colorA != colorF) && (colorA == colorI)))
-          {
-           product = colorB;
-          }
-         else
-          {
-           product = INTERPOLATE8(colorA, colorB);
-          }
+		if(((colorA == colorG) && (colorC == colorO)) ||
+		((colorA == colorB) && (colorA == colorH) &&
+		(colorG != colorC) && (colorC == colorM)))
+		{
+		product1 = colorA;
+		}
+		else
+		{
+		product1 = INTERPOLATE8(colorA, colorC);
+		}
+		product2 = colorA;
+		}
+		else
+		if((colorB == colorC) && (colorA != colorD))
+		{
+		if(((colorB == colorF) && (colorA == colorH)) ||
+		((colorB == colorE) && (colorB == colorD) &&
+		(colorA != colorF) && (colorA == colorI)))
+		{
+		product = colorB;
+		}
+		else
+		{
+		product = INTERPOLATE8(colorA, colorB);
+		}
 
-         if(((colorC == colorH) && (colorA == colorF)) ||
-            ((colorC == colorG) && (colorC == colorD) &&
-             (colorA != colorH) && (colorA == colorI)))
-          {
-           product1 = colorC;
-          }
-         else
-          {
-           product1=INTERPOLATE8(colorA, colorC);
-          }
-         product2 = colorB;
-        }
-       else
-       if((colorA == colorD) && (colorB == colorC))
-        {
-         if (colorA == colorB)
-          {
-           product = colorA;
-           product1 = colorA;
-           product2 = colorA;
-          }
-         else
-          {
-           register int r = 0;
-           product1 = INTERPOLATE8(colorA, colorC);
-           product = INTERPOLATE8(colorA, colorB);
+		if(((colorC == colorH) && (colorA == colorF)) ||
+		((colorC == colorG) && (colorC == colorD) &&
+		(colorA != colorH) && (colorA == colorI)))
+		{
+		product1 = colorC;
+		}
+		else
+		{
+		product1=INTERPOLATE8(colorA, colorC);
+		}
+		product2 = colorB;
+		}
+		else
+		if((colorA == colorD) && (colorB == colorC))
+		{
+		if (colorA == colorB)
+		{
+		product = colorA;
+		product1 = colorA;
+		product2 = colorA;
+		}
+		else
+		{
+		register int r = 0;
+		product1 = INTERPOLATE8(colorA, colorC);
+		product = INTERPOLATE8(colorA, colorB);
 
-           r += GetResult1 (colorA&0x00FFFFFF, colorB&0x00FFFFFF, colorG&0x00FFFFFF, colorE&0x00FFFFFF, colorI&0x00FFFFFF);
-           r += GetResult2 (colorB&0x00FFFFFF, colorA&0x00FFFFFF, colorK&0x00FFFFFF, colorF&0x00FFFFFF, colorJ&0x00FFFFFF);
-           r += GetResult2 (colorB&0x00FFFFFF, colorA&0x00FFFFFF, colorH&0x00FFFFFF, colorN&0x00FFFFFF, colorM&0x00FFFFFF);
-           r += GetResult1 (colorA&0x00FFFFFF, colorB&0x00FFFFFF, colorL&0x00FFFFFF, colorO&0x00FFFFFF, colorP&0x00FFFFFF);
+		r += GetResult1 (colorA&0x00FFFFFF, colorB&0x00FFFFFF, colorG&0x00FFFFFF, colorE&0x00FFFFFF, colorI&0x00FFFFFF);
+		r += GetResult2 (colorB&0x00FFFFFF, colorA&0x00FFFFFF, colorK&0x00FFFFFF, colorF&0x00FFFFFF, colorJ&0x00FFFFFF);
+		r += GetResult2 (colorB&0x00FFFFFF, colorA&0x00FFFFFF, colorH&0x00FFFFFF, colorN&0x00FFFFFF, colorM&0x00FFFFFF);
+		r += GetResult1 (colorA&0x00FFFFFF, colorB&0x00FFFFFF, colorL&0x00FFFFFF, colorO&0x00FFFFFF, colorP&0x00FFFFFF);
 
-           if (r > 0)
-            product2 = colorA;
-           else
-           if (r < 0)
-            product2 = colorB;
-           else
-            {
-             product2 = Q_INTERPOLATE8(colorA, colorB, colorC, colorD);
-            }
-          }
-        }
-       else
-        {
-         product2 = Q_INTERPOLATE8(colorA, colorB, colorC, colorD);
+		if (r > 0)
+		product2 = colorA;
+		else
+		if (r < 0)
+		product2 = colorB;
+		else
+		{
+		product2 = Q_INTERPOLATE8(colorA, colorB, colorC, colorD);
+		}
+		}
+		}
+		else
+		{
+		product2 = Q_INTERPOLATE8(colorA, colorB, colorC, colorD);
 
-         if ((colorA == colorC) && (colorA == colorF) &&
-             (colorB != colorE) && (colorB == colorJ))
-          {
-           product = colorA;
-          }
-         else
-         if ((colorB == colorE) && (colorB == colorD) && (colorA != colorF) && (colorA == colorI))
-          {
-           product = colorB;
-          }
-         else
-          {
-           product = INTERPOLATE8(colorA, colorB);
-          }
+		if ((colorA == colorC) && (colorA == colorF) &&
+		(colorB != colorE) && (colorB == colorJ))
+		{
+		product = colorA;
+		}
+		else
+		if ((colorB == colorE) && (colorB == colorD) && (colorA != colorF) && (colorA == colorI))
+		{
+		product = colorB;
+		}
+		else
+		{
+		product = INTERPOLATE8(colorA, colorB);
+		}
 
-         if ((colorA == colorB) && (colorA == colorH) &&
-             (colorG != colorC) && (colorC == colorM))
-          {
-           product1 = colorA;
-          }
-         else
-         if ((colorC == colorG) && (colorC == colorD) &&
-             (colorA != colorH) && (colorA == colorI))
-          {
-           product1 = colorC;
-          }
-         else
-          {
-           product1 = INTERPOLATE8(colorA, colorC);
-          }
-        }
+		if ((colorA == colorB) && (colorA == colorH) &&
+		(colorG != colorC) && (colorC == colorM))
+		{
+		product1 = colorA;
+		}
+		else
+		if ((colorC == colorG) && (colorC == colorD) &&
+		(colorA != colorH) && (colorA == colorI))
+		{
+		product1 = colorC;
+		}
+		else
+		{
+		product1 = INTERPOLATE8(colorA, colorC);
+		}
+		}
 
-//////////////////////////
+		//////////////////////////
 
-       *dP=colorA;
-       *(dP+1)=product;
-       *(dP+(srcPitchHalf))=product1;
-       *(dP+1+(srcPitchHalf))=product2;
+		*dP=colorA;
+		*(dP+1)=product;
+		*(dP+(srcPitchHalf))=product1;
+		*(dP+1+(srcPitchHalf))=product2;
 
-       bP += 1;
-       dP += 2;
-      }//end of for ( finish= width etc..)
+		bP += 1;
+		dP += 2;
+		}//end of for ( finish= width etc..)
 
-     line += 2;
-     srcPtr += srcPitch;
-	}; //endof: for (; height; height--)
-  }
+		line += 2;
+		srcPtr += srcPitch;
+	} //endof: for (; height; height--)
+	
 }
 
 ////////////////////////////////////////////////////////////////////////
