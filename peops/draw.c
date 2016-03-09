@@ -634,167 +634,175 @@ void Std2xSaI_ex8(unsigned char *srcPtr, DWORD srcPitch, unsigned char *dstBitma
 
 ////////////////////////////////////////////////////////////////////////
 
-void SuperEagle_ex8(unsigned char *srcPtr, DWORD srcPitch,
-	                unsigned char  *dstBitmap, int width, int height)
-{
- DWORD dstPitch        = srcPitch<<1;
- DWORD srcPitchHalf    = srcPitch>>1;
- int   finWidth        = srcPitch>>2;
- DWORD line;
- DWORD *dP;
- DWORD *bP;
- int iXA,iXB,iXC,iYA,iYB,iYC,finish;
- DWORD color4, color5, color6;
- DWORD color1, color2, color3;
- DWORD colorA1, colorA2,
-       colorB1, colorB2,
-       colorS1, colorS2;
- DWORD product1a, product1b,
-       product2a, product2b;
+void SuperEagle_ex8(unsigned char *srcPtr, DWORD srcPitch, unsigned char  *dstBitmap, int width, int height) {
+	
+	DWORD dstPitch = srcPitch << 1;
+	DWORD srcPitchHalf = srcPitch >> 1;
+	int finWidth = srcPitch >> 2;
+	DWORD line;
+	DWORD *dP;
+	DWORD *bP;
+	int iXA,iXB,iXC,iYA,iYB,iYC,finish;
+	DWORD color4, color5, color6;
+	DWORD color1, color2, color3;
+	DWORD colorA1, colorA2, colorB1, colorB2, colorS1, colorS2;
+	DWORD product1a, product1b, product2a, product2b;
 
- line = 0;
+	line = 0;
 
-  {
-   for (; height; height-=1)
-	{
-     bP = (DWORD *)srcPtr;
-	 dP = (DWORD *)(dstBitmap + line*dstPitch);
-     for (finish = width; finish; finish -= 1 )
-      {
-       if(finish==finWidth) iXA=0;
-       else                 iXA=1;
-       if(finish>4) {iXB=1;iXC=2;}
-       else
-       if(finish>3) {iXB=1;iXC=1;}
-       else         {iXB=0;iXC=0;}
-       if(line==0)  {iYA=0;}
-       else         {iYA=finWidth;}
-       if(height>4) {iYB=finWidth;iYC=srcPitchHalf;}
-       else
-       if(height>3) {iYB=finWidth;iYC=finWidth;}
-       else         {iYB=0;iYC=0;}
+	for(; height; height-=1) {
+		
+		bP = (DWORD*)srcPtr;
+		dP = (DWORD*)(dstBitmap + line * dstPitch);
+		
+		for(finish = width; finish; finish -= 1) {
+			
+			if(finish == finWidth)
+				iXA = 0;
+			else
+				iXA = 1;
+				
+			if(finish>4) {
+				
+				iXB = 1;
+				iXC = 2;
+			} else if(finish>3) {
+				
+				iXB = 1;
+				iXC = 1;
+			} else {
+				
+				iXB = 0;
+				iXC = 0;
+			}
+			
+			if(line == 0) {
+				
+				iYA = 0;
+			} else {
+				
+				iYA = finWidth;
+			} 
+			
+			if(height>4) {
+				
+				iYB = finWidth;
+				iYC = srcPitchHalf;
+			} else if(height>3) {
+				
+				iYB = finWidth;
+				iYC = finWidth;
+			} else {
+				
+				iYB=0;
+				iYC=0;
+			}
 
-       colorB1 = *(bP- iYA);
-       colorB2 = *(bP- iYA + iXB);
+			colorB1 = *(bP - iYA);
+			colorB2 = *(bP - iYA + iXB);
 
-       color4 = *(bP  - iXA);
-       color5 = *(bP);
-       color6 = *(bP  + iXB);
-       colorS2 = *(bP + iXC);
+			color4 = *(bP - iXA);
+			color5 = *(bP);
+			color6 = *(bP + iXB);
+			colorS2 = *(bP + iXC);
 
-       color1 = *(bP  + iYB  - iXA);
-       color2 = *(bP  + iYB);
-       color3 = *(bP  + iYB  + iXB);
-       colorS1= *(bP  + iYB  + iXC);
+			color1 = *(bP + iYB - iXA);
+			color2 = *(bP + iYB);
+			color3 = *(bP + iYB + iXB);
+			colorS1= *(bP + iYB + iXC);
 
-       colorA1 = *(bP + iYC);
-       colorA2 = *(bP + iYC + iXB);
+			colorA1 = *(bP + iYC);
+			colorA2 = *(bP + iYC + iXB);
 
-       if(color2 == color6 && color5 != color3)
-        {
-         product1b = product2a = color2;
-         if((color1 == color2) ||
-            (color6 == colorB2))
-          {
-           product1a = INTERPOLATE8(color2, color5);
-           product1a = INTERPOLATE8(color2, product1a);
-          }
-         else
-          {
-           product1a = INTERPOLATE8(color5, color6);
-          }
+			if(color2 == color6 && color5 != color3) {
+			
+				product1b = product2a = color2;
+			
+				if((color1 == color2) || (color6 == colorB2)) {
+					
+					product1a = INTERPOLATE8(color2, color5);
+					product1a = INTERPOLATE8(color2, product1a);
+				} else {
+			
+					product1a = INTERPOLATE8(color5, color6);
+				}
 
-         if((color6 == colorS2) ||
-            (color2 == colorA1))
-          {
-           product2b = INTERPOLATE8(color2, color3);
-           product2b = INTERPOLATE8(color2, product2b);
-          }
-         else
-          {
-           product2b = INTERPOLATE8(color2, color3);
-          }
-        }
-       else
-       if (color5 == color3 && color2 != color6)
-        {
-         product2b = product1a = color5;
+				if((color6 == colorS2) || (color2 == colorA1)) {
+					
+					product2b = INTERPOLATE8(color2, color3);
+					product2b = INTERPOLATE8(color2, product2b);
+				} else {
+				
+					product2b = INTERPOLATE8(color2, color3);
+				}			
+			} else if(color5 == color3 && color2 != color6) {
+				
+				product2b = product1a = color5;
 
-         if ((colorB1 == color5) ||
-             (color3 == colorS1))
-          {
-           product1b = INTERPOLATE8(color5, color6);
-           product1b = INTERPOLATE8(color5, product1b);
-          }
-         else
-          {
-           product1b = INTERPOLATE8(color5, color6);
-          }
+				if ((colorB1 == color5) || (color3 == colorS1)) {
+				
+					product1b = INTERPOLATE8(color5, color6);
+					product1b = INTERPOLATE8(color5, product1b);
+				} else {
+				
+					product1b = INTERPOLATE8(color5, color6);
+				}
 
-         if ((color3 == colorA2) ||
-             (color4 == color5))
-          {
-           product2a = INTERPOLATE8(color5, color2);
-           product2a = INTERPOLATE8(color5, product2a);
-          }
-         else
-          {
-           product2a = INTERPOLATE8(color2, color3);
-          }
-        }
-       else
-       if (color5 == color3 && color2 == color6)
-        {
-         register int r = 0;
+				if((color3 == colorA2) || (color4 == color5)) {
+					
+					product2a = INTERPOLATE8(color5, color2);
+					product2a = INTERPOLATE8(color5, product2a);
+				} else {
+				
+					product2a = INTERPOLATE8(color2, color3);
+				}
+			} else if(color5 == color3 && color2 == color6) {
+				
+				register int r = 0;
 
-         r += GET_RESULT ((color6&0x00ffffff), (color5&0x00ffffff), (color1&0x00ffffff),  (colorA1&0x00ffffff));
-         r += GET_RESULT ((color6&0x00ffffff), (color5&0x00ffffff), (color4&0x00ffffff),  (colorB1&0x00ffffff));
-         r += GET_RESULT ((color6&0x00ffffff), (color5&0x00ffffff), (colorA2&0x00ffffff), (colorS1&0x00ffffff));
-         r += GET_RESULT ((color6&0x00ffffff), (color5&0x00ffffff), (colorB2&0x00ffffff), (colorS2&0x00ffffff));
+				r += GET_RESULT((color6&0x00ffffff), (color5&0x00ffffff), (color1&0x00ffffff), (colorA1&0x00ffffff));
+				r += GET_RESULT((color6&0x00ffffff), (color5&0x00ffffff), (color4&0x00ffffff), (colorB1&0x00ffffff));
+				r += GET_RESULT((color6&0x00ffffff), (color5&0x00ffffff), (colorA2&0x00ffffff), (colorS1&0x00ffffff));
+				r += GET_RESULT((color6&0x00ffffff), (color5&0x00ffffff), (colorB2&0x00ffffff), (colorS2&0x00ffffff));
 
-         if (r > 0)
-          {
-           product1b = product2a = color2;
-           product1a = product2b = INTERPOLATE8(color5, color6);
-          }
-         else
-         if (r < 0)
-          {
-           product2b = product1a = color5;
-           product1b = product2a = INTERPOLATE8(color5, color6);
-          }
-         else
-          {
-           product2b = product1a = color5;
-           product1b = product2a = color2;
-          }
-        }
-       else
-        {
-         product2b = product1a = INTERPOLATE8(color2, color6);
-         product2b = Q_INTERPOLATE8(color3, color3, color3, product2b);
-         product1a = Q_INTERPOLATE8(color5, color5, color5, product1a);
+				if(r > 0) {
+			
+					product1b = product2a = color2;
+					product1a = product2b = INTERPOLATE8(color5, color6);
+				} else if(r < 0) {
+					
+					product2b = product1a = color5;
+					product1b = product2a = INTERPOLATE8(color5, color6);
+				} else {
+					
+					product2b = product1a = color5;
+					product1b = product2a = color2;
+				}
+			} else {
+				
+				product2b = product1a = INTERPOLATE8(color2, color6);
+				product2b = Q_INTERPOLATE8(color3, color3, color3, product2b);
+				product1a = Q_INTERPOLATE8(color5, color5, color5, product1a);
 
-         product2a = product1b = INTERPOLATE8(color5, color3);
-         product2a = Q_INTERPOLATE8(color2, color2, color2, product2a);
-         product1b = Q_INTERPOLATE8(color6, color6, color6, product1b);
-        }
+				product2a = product1b = INTERPOLATE8(color5, color3);
+				product2a = Q_INTERPOLATE8(color2, color2, color2, product2a);
+				product1b = Q_INTERPOLATE8(color6, color6, color6, product1b);
+			}
 
-////////////////////////////////
+			////////////////////////////////
 
-       *dP=product1a;
-       *(dP+1)=product1b;
-       *(dP+(srcPitchHalf))=product2a;
-       *(dP+1+(srcPitchHalf))=product2b;
+			*dP=product1a;
+			*(dP+1)=product1b;
+			*(dP+(srcPitchHalf))=product2a;
+			*(dP+1+(srcPitchHalf))=product2b;
 
-       bP += 1;
-       dP += 2;
-      }//end of for ( finish= width etc..)
+			bP += 1;
+			dP += 2;
+		}//end of for ( finish= width etc..)
 
-     line += 2;
-     srcPtr += srcPitch;
-	}; //endof: for (; height; height--)
-  }
+		line += 2;
+		srcPtr += srcPitch;
+	} //endof: for (; height; height--)
 }
 
 /////////////////////////
