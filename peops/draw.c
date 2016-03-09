@@ -807,21 +807,23 @@ void SuperEagle_ex8(unsigned char *srcPtr, DWORD srcPitch, unsigned char  *dstBi
 
 /////////////////////////
 
-static __inline void scale2x_32_def_whole(unsigned long* dst0, unsigned long* dst1, const unsigned long* src0, const unsigned long* src1, const unsigned long* src2, unsigned count)
-{
+static __inline void scale2x_32_def_whole(unsigned long* dst0, unsigned long* dst1, const unsigned long* src0, const unsigned long* src1, const unsigned long* src2, unsigned count) {
 
 	// first pixel
-	if (src0[0] != src2[0] && src1[0] != src1[1]) {
+	if(src0[0] != src2[0] && src1[0] != src1[1]) {
+		
 		dst0[0] = src1[0] == src0[0] ? src0[0] : src1[0];
 		dst0[1] = src1[1] == src0[0] ? src0[0] : src1[0];
 		dst1[0] = src1[0] == src2[0] ? src2[0] : src1[0];
 		dst1[1] = src1[1] == src2[0] ? src2[0] : src1[0];
 	} else {
+		
 		dst0[0] = src1[0];
 		dst0[1] = src1[0];
 		dst1[0] = src1[0];
 		dst1[1] = src1[0];
 	}
+	
 	++src0;
 	++src1;
 	++src2;
@@ -830,13 +832,16 @@ static __inline void scale2x_32_def_whole(unsigned long* dst0, unsigned long* ds
 
 	// central pixels
 	count -= 2;
-	while (count) {
-		if (src0[0] != src2[0] && src1[-1] != src1[1]) {
+	while(count) {
+		
+		if(src0[0] != src2[0] && src1[-1] != src1[1]) {
+			
 			dst0[0] = src1[-1] == src0[0] ? src0[0] : src1[0];
 			dst0[1] = src1[1] == src0[0] ? src0[0] : src1[0];
 			dst1[0] = src1[-1] == src2[0] ? src2[0] : src1[0];
 			dst1[1] = src1[1] == src2[0] ? src2[0] : src1[0];
 		} else {
+			
 			dst0[0] = src1[0];
 			dst0[1] = src1[0];
 			dst1[0] = src1[0];
@@ -853,10 +858,12 @@ static __inline void scale2x_32_def_whole(unsigned long* dst0, unsigned long* ds
 
 	// last pixel
 	if (src0[0] != src2[0] && src1[-1] != src1[0]) {
+		
 		dst0[0] = src1[-1] == src0[0] ? src0[0] : src1[0];
 		dst0[1] = src1[0] == src0[0] ? src0[0] : src1[0];
 		dst1[0] = src1[-1] == src2[0] ? src2[0] : src1[0];
 		dst1[1] = src1[0] == src2[0] ? src2[0] : src1[0];
+		
 	} else {
 		dst0[0] = src1[0];
 		dst0[1] = src1[0];
@@ -872,16 +879,14 @@ static __inline void scale2x_32_def_whole(unsigned long* dst0, unsigned long* ds
 #define MIN(a,b)    (((a) < (b)) ? (a) : (b))
 #endif
 
-void Scale2x_ex8(unsigned char *srcPtr, DWORD srcPitch,
-				 unsigned char  *dstPtr, int width, int height)
-{
+//NOT IMPLEMENTED
+void Scale2x_ex8(unsigned char *srcPtr, DWORD srcPitch, unsigned char  *dstPtr, int width, int height) {}
 
-}
-
-static __inline void scale3x_16_def_whole(unsigned short* dst0, unsigned short* dst1, unsigned short* dst2, const unsigned short* src0, const unsigned short* src1, const unsigned short* src2, unsigned count)
-{
+static __inline void scale3x_16_def_whole(unsigned short* dst0, unsigned short* dst1, unsigned short* dst2, const unsigned short* src0, const unsigned short* src1, const unsigned short* src2, unsigned count) {
+	
 	// first pixel
-	if (src0[0] != src2[0] && src1[0] != src1[1]) {
+	if(src0[0] != src2[0] && src1[0] != src1[1]) {
+		
 		dst0[0] = src1[0];
 		dst0[1] = (src1[0] == src0[0] && src1[0] != src0[1]) || (src1[1] == src0[0] && src1[0] != src0[0]) ? src0[0] : src1[0];
 		dst0[2] = src1[1] == src0[0] ? src1[1] : src1[0];
@@ -891,7 +896,9 @@ static __inline void scale3x_16_def_whole(unsigned short* dst0, unsigned short* 
 		dst2[0] = src1[0];
 		dst2[1] = (src1[0] == src2[0] && src1[0] != src2[1]) || (src1[1] == src2[0] && src1[0] != src2[0]) ? src2[0] : src1[0];
 		dst2[2] = src1[1] == src2[0] ? src1[1] : src1[0];
+		
 	} else {
+		
 		dst0[0] = src1[0];
 		dst0[1] = src1[0];
 		dst0[2] = src1[0];
@@ -902,6 +909,7 @@ static __inline void scale3x_16_def_whole(unsigned short* dst0, unsigned short* 
 		dst2[1] = src1[0];
 		dst2[2] = src1[0];
 	}
+	
 	++src0;
 	++src1;
 	++src2;
@@ -911,8 +919,11 @@ static __inline void scale3x_16_def_whole(unsigned short* dst0, unsigned short* 
 
 	// central pixels
 	count -= 2;
-	while (count) {
-		if (src0[0] != src2[0] && src1[-1] != src1[1]) {
+	
+	while(count) {
+		
+		if(src0[0] != src2[0] && src1[-1] != src1[1]) {
+			
 			dst0[0] = src1[-1] == src0[0] ? src1[-1] : src1[0];
 			dst0[1] = (src1[-1] == src0[0] && src1[0] != src0[1]) || (src1[1] == src0[0] && src1[0] != src0[-1]) ? src0[0] : src1[0];
 			dst0[2] = src1[1] == src0[0] ? src1[1] : src1[0];
@@ -923,6 +934,7 @@ static __inline void scale3x_16_def_whole(unsigned short* dst0, unsigned short* 
 			dst2[1] = (src1[-1] == src2[0] && src1[0] != src2[1]) || (src1[1] == src2[0] && src1[0] != src2[-1]) ? src2[0] : src1[0];
 			dst2[2] = src1[1] == src2[0] ? src1[1] : src1[0];
 		} else {
+			
 			dst0[0] = src1[0];
 			dst0[1] = src1[0];
 			dst0[2] = src1[0];
@@ -944,7 +956,8 @@ static __inline void scale3x_16_def_whole(unsigned short* dst0, unsigned short* 
 	}
 
 	// last pixel
-	if (src0[0] != src2[0] && src1[-1] != src1[0]) {
+	if(src0[0] != src2[0] && src1[-1] != src1[0]) {
+		
 		dst0[0] = src1[-1] == src0[0] ? src1[-1] : src1[0];
 		dst0[1] = (src1[-1] == src0[0] && src1[0] != src0[0]) || (src1[0] == src0[0] && src1[0] != src0[-1]) ? src0[0] : src1[0];
 		dst0[2] = src1[0];
@@ -954,7 +967,9 @@ static __inline void scale3x_16_def_whole(unsigned short* dst0, unsigned short* 
 		dst2[0] = src1[-1] == src2[0] ? src1[-1] : src1[0];
 		dst2[1] = (src1[-1] == src2[0] && src1[0] != src2[0]) || (src1[0] == src2[0] && src1[0] != src2[-1]) ? src2[0] : src1[0];
 		dst2[2] = src1[0];
+		
 	} else {
+		
 		dst0[0] = src1[0];
 		dst0[1] = src1[0];
 		dst0[2] = src1[0];
@@ -968,11 +983,11 @@ static __inline void scale3x_16_def_whole(unsigned short* dst0, unsigned short* 
 }
 
 
-static __inline void scale3x_32_def_whole(unsigned long* dst0, unsigned long* dst1, unsigned long* dst2, const unsigned long* src0, const unsigned long* src1, const unsigned long* src2, unsigned count)
-{
+static __inline void scale3x_32_def_whole(unsigned long* dst0, unsigned long* dst1, unsigned long* dst2, const unsigned long* src0, const unsigned long* src1, const unsigned long* src2, unsigned count) {
 
 	// first pixel
 	if (src0[0] != src2[0] && src1[0] != src1[1]) {
+		
 		dst0[0] = src1[0];
 		dst0[1] = (src1[0] == src0[0] && src1[0] != src0[1]) || (src1[1] == src0[0] && src1[0] != src0[0]) ? src0[0] : src1[0];
 		dst0[2] = src1[1] == src0[0] ? src1[1] : src1[0];
@@ -982,7 +997,9 @@ static __inline void scale3x_32_def_whole(unsigned long* dst0, unsigned long* ds
 		dst2[0] = src1[0];
 		dst2[1] = (src1[0] == src2[0] && src1[0] != src2[1]) || (src1[1] == src2[0] && src1[0] != src2[0]) ? src2[0] : src1[0];
 		dst2[2] = src1[1] == src2[0] ? src1[1] : src1[0];
+		
 	} else {
+		
 		dst0[0] = src1[0];
 		dst0[1] = src1[0];
 		dst0[2] = src1[0];
@@ -993,6 +1010,7 @@ static __inline void scale3x_32_def_whole(unsigned long* dst0, unsigned long* ds
 		dst2[1] = src1[0];
 		dst2[2] = src1[0];
 	}
+	
 	++src0;
 	++src1;
 	++src2;
@@ -1002,8 +1020,11 @@ static __inline void scale3x_32_def_whole(unsigned long* dst0, unsigned long* ds
 
 	// central pixels
 	count -= 2;
-	while (count) {
-		if (src0[0] != src2[0] && src1[-1] != src1[1]) {
+	
+	while(count) {
+		
+		if(src0[0] != src2[0] && src1[-1] != src1[1]) {
+			
 			dst0[0] = src1[-1] == src0[0] ? src1[-1] : src1[0];
 			dst0[1] = (src1[-1] == src0[0] && src1[0] != src0[1]) || (src1[1] == src0[0] && src1[0] != src0[-1]) ? src0[0] : src1[0];
 			dst0[2] = src1[1] == src0[0] ? src1[1] : src1[0];
@@ -1013,7 +1034,9 @@ static __inline void scale3x_32_def_whole(unsigned long* dst0, unsigned long* ds
 			dst2[0] = src1[-1] == src2[0] ? src1[-1] : src1[0];
 			dst2[1] = (src1[-1] == src2[0] && src1[0] != src2[1]) || (src1[1] == src2[0] && src1[0] != src2[-1]) ? src2[0] : src1[0];
 			dst2[2] = src1[1] == src2[0] ? src1[1] : src1[0];
+			
 		} else {
+			
 			dst0[0] = src1[0];
 			dst0[1] = src1[0];
 			dst0[2] = src1[0];
@@ -1035,7 +1058,8 @@ static __inline void scale3x_32_def_whole(unsigned long* dst0, unsigned long* ds
 	}
 
 	// last pixel
-	if (src0[0] != src2[0] && src1[-1] != src1[0]) {
+	if(src0[0] != src2[0] && src1[-1] != src1[0]) {
+		
 		dst0[0] = src1[-1] == src0[0] ? src1[-1] : src1[0];
 		dst0[1] = (src1[-1] == src0[0] && src1[0] != src0[0]) || (src1[0] == src0[0] && src1[0] != src0[-1]) ? src0[0] : src1[0];
 		dst0[2] = src1[0];
@@ -1046,6 +1070,7 @@ static __inline void scale3x_32_def_whole(unsigned long* dst0, unsigned long* ds
 		dst2[1] = (src1[-1] == src2[0] && src1[0] != src2[0]) || (src1[0] == src2[0] && src1[0] != src2[-1]) ? src2[0] : src1[0];
 		dst2[2] = src1[0];
 	} else {
+		
 		dst0[0] = src1[0];
 		dst0[1] = src1[0];
 		dst0[2] = src1[0];
@@ -1058,131 +1083,128 @@ static __inline void scale3x_32_def_whole(unsigned long* dst0, unsigned long* ds
 	}
 }
 
-void Scale3x_ex6_5(unsigned char *srcPtr, DWORD srcPitch,
-				   unsigned char  *dstPtr, int width, int height)
-{
+void Scale3x_ex6_5(unsigned char *srcPtr, DWORD srcPitch, unsigned char  *dstPtr, int width, int height) {
 
-  int looph, loopw;
+	int looph, loopw;
+	unsigned char * srcpix = srcPtr;
+	unsigned char * dstpix = dstPtr;
+	const int srcpitch = srcPitch;
+	const int dstpitch = srcPitch*3;
+	unsigned short E0, E1, E2, E3, E4, E5, E6, E7, E8;
+	unsigned short A, B, C, D, E, F, G, H, I;
+	
+	for(looph = 0; looph < height; ++looph) {
+		
+		for(loopw = 0; loopw < width; ++ loopw) {
+				
+			A = *(unsigned short*)(srcpix + (MAX(0,looph-1)*srcpitch) + (2*MAX(0,loopw-1)));
+			B = *(unsigned short*)(srcpix + (MAX(0,looph-1)*srcpitch) + (2*loopw));
+			C = *(unsigned short*)(srcpix + (MAX(0,looph-1)*srcpitch) + (2*MIN(width-1,loopw+1)));
+			D = *(unsigned short*)(srcpix + (looph*srcpitch) + (2*MAX(0,loopw-1)));
+			E = *(unsigned short*)(srcpix + (looph*srcpitch) + (2*loopw));
+			F = *(unsigned short*)(srcpix + (looph*srcpitch) + (2*MIN(width-1,loopw+1)));
+			G = *(unsigned short*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (2*MAX(0,loopw-1)));
+			H = *(unsigned short*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (2*loopw));
+			I = *(unsigned short*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (2*MIN(width-1,loopw+1)));
 
- unsigned char * srcpix = srcPtr;
- unsigned char * dstpix = dstPtr;
+			if(B != H && D != F) {
+				
+				E0 = D == B ? D : E;
+				E1 = (D == B && E != C) || (B == F && E != A) ? B : E;
+				E2 = B == F ? F : E;
+				E3 = (D == B && E != G) || (D == H && E != A) ? D : E;
+				E4 = E;
+				E5 = (B == F && E != I) || (H == F && E != C) ? F : E;
+				E6 = D == H ? D : E;
+				E7 = (D == H && E != I) || (H == F && E != G) ? H : E;
+				E8 = H == F ? F : E;
+			} else {
+				
+				E0 = E;
+				E1 = E;
+				E2 = E;
+				E3 = E;
+				E4 = E;
+				E5 = E;
+				E6 = E;
+				E7 = E;
+				E8 = E;
+			}
 
- const int srcpitch = srcPitch;
- const int dstpitch = srcPitch*3;
 
- unsigned short E0, E1, E2, E3, E4, E5, E6, E7, E8;
- unsigned short A, B, C, D, E, F, G, H, I;
- for(looph = 0; looph < height; ++looph)
-  {
-   for(loopw = 0; loopw < width; ++ loopw)
-    {
-     A = *(unsigned short*)(srcpix + (MAX(0,looph-1)*srcpitch) + (2*MAX(0,loopw-1)));
-     B = *(unsigned short*)(srcpix + (MAX(0,looph-1)*srcpitch) + (2*loopw));
-     C = *(unsigned short*)(srcpix + (MAX(0,looph-1)*srcpitch) + (2*MIN(width-1,loopw+1)));
-     D = *(unsigned short*)(srcpix + (looph*srcpitch) + (2*MAX(0,loopw-1)));
-     E = *(unsigned short*)(srcpix + (looph*srcpitch) + (2*loopw));
-     F = *(unsigned short*)(srcpix + (looph*srcpitch) + (2*MIN(width-1,loopw+1)));
-     G = *(unsigned short*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (2*MAX(0,loopw-1)));
-     H = *(unsigned short*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (2*loopw));
-     I = *(unsigned short*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (2*MIN(width-1,loopw+1)));
-
-	if (B != H && D != F) {
- 	   E0 = D == B ? D : E;
-	   E1 = (D == B && E != C) || (B == F && E != A) ? B : E;
-	   E2 = B == F ? F : E;
-    	   E3 = (D == B && E != G) || (D == H && E != A) ? D : E;
-	   E4 = E;
-    	   E5 = (B == F && E != I) || (H == F && E != C) ? F : E;
-    	   E6 = D == H ? D : E;
-           E7 = (D == H && E != I) || (H == F && E != G) ? H : E;
-           E8 = H == F ? F : E;
-	} else {
-    	   E0 = E;
-    	   E1 = E;
-    	   E2 = E;
-    	   E3 = E;
-    	   E4 = E;
-    	   E5 = E;
-    	   E6 = E;
-    	   E7 = E;
-    	   E8 = E;
+			*(unsigned long*)(dstpix + looph*3*dstpitch + loopw*3*2) = E0;
+			*(unsigned long*)(dstpix + looph*3*dstpitch + (loopw*3+1)*2) = E1;
+			*(unsigned long*)(dstpix + looph*3*dstpitch + (loopw*3+2)*2) = E2;
+			*(unsigned long*)(dstpix + (looph*3+1)*dstpitch + loopw*3*2) = E3;
+			*(unsigned long*)(dstpix + (looph*3+1)*dstpitch + (loopw*3+1)*2) = E4;
+			*(unsigned long*)(dstpix + (looph*3+1)*dstpitch + (loopw*3+2)*2) = E5;
+			*(unsigned long*)(dstpix + (looph*3+2)*dstpitch + loopw*3*2) = E6;
+			*(unsigned long*)(dstpix + (looph*3+2)*dstpitch + (loopw*3+1)*2) = E7;
+			*(unsigned long*)(dstpix + (looph*3+2)*dstpitch + (loopw*3+2)*2) = E8;
+		}
+	}
 }
 
+void Scale3x_ex8(unsigned char *srcPtr, DWORD srcPitch, unsigned char  *dstPtr, int width, int height) {
 
-     *(unsigned long*)(dstpix + looph*3*dstpitch + loopw*3*2) = E0;
-     *(unsigned long*)(dstpix + looph*3*dstpitch + (loopw*3+1)*2) = E1;
-     *(unsigned long*)(dstpix + looph*3*dstpitch + (loopw*3+2)*2) = E2;
-     *(unsigned long*)(dstpix + (looph*3+1)*dstpitch + loopw*3*2) = E3;
-     *(unsigned long*)(dstpix + (looph*3+1)*dstpitch + (loopw*3+1)*2) = E4;
-     *(unsigned long*)(dstpix + (looph*3+1)*dstpitch + (loopw*3+2)*2) = E5;
-     *(unsigned long*)(dstpix + (looph*3+2)*dstpitch + loopw*3*2) = E6;
-     *(unsigned long*)(dstpix + (looph*3+2)*dstpitch + (loopw*3+1)*2) = E7;
-     *(unsigned long*)(dstpix + (looph*3+2)*dstpitch + (loopw*3+2)*2) = E8;
-    }
-  }
-}
+	int looph, loopw;
+	unsigned char * srcpix = srcPtr;
+	unsigned char * dstpix = dstPtr;
+	const int srcpitch = srcPitch;
+	const int dstpitch = srcPitch*3;
+	unsigned long E0, E1, E2, E3, E4, E5, E6, E7, E8;
+	unsigned long A, B, C, D, E, F, G, H, I;
+	
+	for(looph = 0; looph < height; ++looph) {
+		
+		for(loopw = 0; loopw < width; ++ loopw) {
+			
+			A = *(unsigned long*)(srcpix + (MAX(0,looph-1)*srcpitch) + (4*MAX(0,loopw-1)));
+			B = *(unsigned long*)(srcpix + (MAX(0,looph-1)*srcpitch) + (4*loopw));
+			C = *(unsigned long*)(srcpix + (MAX(0,looph-1)*srcpitch) + (4*MIN(width-1,loopw+1)));
+			D = *(unsigned long*)(srcpix + (looph*srcpitch) + (4*MAX(0,loopw-1)));
+			E = *(unsigned long*)(srcpix + (looph*srcpitch) + (4*loopw));
+			F = *(unsigned long*)(srcpix + (looph*srcpitch) + (4*MIN(width-1,loopw+1)));
+			G = *(unsigned long*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (4*MAX(0,loopw-1)));
+			H = *(unsigned long*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (4*loopw));
+			I = *(unsigned long*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (4*MIN(width-1,loopw+1)));
 
-void Scale3x_ex8(unsigned char *srcPtr, DWORD srcPitch,
-				 unsigned char  *dstPtr, int width, int height)
-{
-  int looph, loopw;
-
- unsigned char * srcpix = srcPtr;
- unsigned char * dstpix = dstPtr;
-
- const int srcpitch = srcPitch;
- const int dstpitch = srcPitch*3;
-
- unsigned long E0, E1, E2, E3, E4, E5, E6, E7, E8;
- unsigned long A, B, C, D, E, F, G, H, I;
- for(looph = 0; looph < height; ++looph)
-  {
-   for(loopw = 0; loopw < width; ++ loopw)
-    {
-     A = *(unsigned long*)(srcpix + (MAX(0,looph-1)*srcpitch) + (4*MAX(0,loopw-1)));
-     B = *(unsigned long*)(srcpix + (MAX(0,looph-1)*srcpitch) + (4*loopw));
-     C = *(unsigned long*)(srcpix + (MAX(0,looph-1)*srcpitch) + (4*MIN(width-1,loopw+1)));
-     D = *(unsigned long*)(srcpix + (looph*srcpitch) + (4*MAX(0,loopw-1)));
-     E = *(unsigned long*)(srcpix + (looph*srcpitch) + (4*loopw));
-     F = *(unsigned long*)(srcpix + (looph*srcpitch) + (4*MIN(width-1,loopw+1)));
-     G = *(unsigned long*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (4*MAX(0,loopw-1)));
-     H = *(unsigned long*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (4*loopw));
-     I = *(unsigned long*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (4*MIN(width-1,loopw+1)));
-
-	if (B != H && D != F) {
- 	   E0 = D == B ? D : E;
-	   E1 = (D == B && E != C) || (B == F && E != A) ? B : E;
-	   E2 = B == F ? F : E;
-    	   E3 = (D == B && E != G) || (D == H && E != A) ? D : E;
-	   E4 = E;
-    	   E5 = (B == F && E != I) || (H == F && E != C) ? F : E;
-    	   E6 = D == H ? D : E;
-           E7 = (D == H && E != I) || (H == F && E != G) ? H : E;
-           E8 = H == F ? F : E;
-	} else {
-    	   E0 = E;
-    	   E1 = E;
-    	   E2 = E;
-    	   E3 = E;
-    	   E4 = E;
-    	   E5 = E;
-    	   E6 = E;
-    	   E7 = E;
-    	   E8 = E;
-}
+			if(B != H && D != F) {
+				
+				E0 = D == B ? D : E;
+				E1 = (D == B && E != C) || (B == F && E != A) ? B : E;
+				E2 = B == F ? F : E;
+				E3 = (D == B && E != G) || (D == H && E != A) ? D : E;
+				E4 = E;
+				E5 = (B == F && E != I) || (H == F && E != C) ? F : E;
+				E6 = D == H ? D : E;
+				E7 = (D == H && E != I) || (H == F && E != G) ? H : E;
+				E8 = H == F ? F : E;
+			} else {
+				
+				E0 = E;
+				E1 = E;
+				E2 = E;
+				E3 = E;
+				E4 = E;
+				E5 = E;
+				E6 = E;
+				E7 = E;
+				E8 = E;
+			}
 
 
-     *(unsigned long*)(dstpix + looph*3*dstpitch + loopw*3*4) = E0;
-     *(unsigned long*)(dstpix + looph*3*dstpitch + (loopw*3+1)*4) = E1;
-     *(unsigned long*)(dstpix + looph*3*dstpitch + (loopw*3+2)*4) = E2;
-     *(unsigned long*)(dstpix + (looph*3+1)*dstpitch + loopw*3*4) = E3;
-     *(unsigned long*)(dstpix + (looph*3+1)*dstpitch + (loopw*3+1)*4) = E4;
-     *(unsigned long*)(dstpix + (looph*3+1)*dstpitch + (loopw*3+2)*4) = E5;
-     *(unsigned long*)(dstpix + (looph*3+2)*dstpitch + loopw*3*4) = E6;
-     *(unsigned long*)(dstpix + (looph*3+2)*dstpitch + (loopw*3+1)*4) = E7;
-     *(unsigned long*)(dstpix + (looph*3+2)*dstpitch + (loopw*3+2)*4) = E8;
-    }
-  }
+			*(unsigned long*)(dstpix + looph*3*dstpitch + loopw*3*4) = E0;
+			*(unsigned long*)(dstpix + looph*3*dstpitch + (loopw*3+1)*4) = E1;
+			*(unsigned long*)(dstpix + looph*3*dstpitch + (loopw*3+2)*4) = E2;
+			*(unsigned long*)(dstpix + (looph*3+1)*dstpitch + loopw*3*4) = E3;
+			*(unsigned long*)(dstpix + (looph*3+1)*dstpitch + (loopw*3+1)*4) = E4;
+			*(unsigned long*)(dstpix + (looph*3+1)*dstpitch + (loopw*3+2)*4) = E5;
+			*(unsigned long*)(dstpix + (looph*3+2)*dstpitch + loopw*3*4) = E6;
+			*(unsigned long*)(dstpix + (looph*3+2)*dstpitch + (loopw*3+1)*4) = E7;
+			*(unsigned long*)(dstpix + (looph*3+2)*dstpitch + (loopw*3+2)*4) = E8;
+		}
+	}
 }
 
 
@@ -1197,148 +1219,155 @@ void Scale3x_ex8(unsigned char *srcPtr, DWORD srcPitch,
 #define Q_INTERPOLATE6(A, B, C, D) (((((A & qcolorMask6) >> 2) + ((B & qcolorMask6) >> 2) + ((C & qcolorMask6) >> 2) + ((D & qcolorMask6) >> 2) \
 	+ ((((A & qlowpixelMask6) + (B & qlowpixelMask6) + (C & qlowpixelMask6) + (D & qlowpixelMask6)) >> 2) & qlowpixelMask6))))
 
-void Super2xSaI_ex6(unsigned char *srcPtr, DWORD srcPitch,
-	            unsigned char  *dstBitmap, int width, int height)
-{
- DWORD dstPitch        = srcPitch<<1;
- int   finWidth        = srcPitch>>1;
- DWORD line;
- unsigned short *dP;
- unsigned short *bP;
- int iXA,iXB,iXC,iYA,iYB,iYC,finish;
- DWORD color4, color5, color6;
- DWORD color1, color2, color3;
- DWORD colorA0, colorA1, colorA2, colorA3,
-       colorB0, colorB1, colorB2, colorB3,
-       colorS1, colorS2;
- DWORD product1a, product1b,
-       product2a, product2b;
+void Super2xSaI_ex6(unsigned char *srcPtr, DWORD srcPitch, unsigned char  *dstBitmap, int width, int height) {
 
- line = 0;
+	DWORD dstPitch = srcPitch << 1;
+	int finWidth = srcPitch >> 1;
+	DWORD line;
+	unsigned short *dP;
+	unsigned short *bP;
+	int iXA, iXB, iXC, iYA, iYB, iYC, finish;
+	DWORD color4, color5, color6;
+	DWORD color1, color2, color3;
+	DWORD colorA0, colorA1, colorA2, colorA3, colorB0, colorB1, colorB2, colorB3, colorS1, colorS2;
+	DWORD product1a, product1b, product2a, product2b;
 
-  {
-   for (; height; height-=1)
-	{
-     bP = (unsigned short *)srcPtr;
-	 dP = (unsigned short *)(dstBitmap + line*dstPitch);
-     for (finish = width; finish; finish -= 1 )
-      {
-//---------------------------------------    B1 B2
-//                                         4  5  6 S2
-//                                         1  2  3 S1
-//                                           A1 A2
-       if(finish==finWidth) iXA=0;
-       else                 iXA=1;
-       if(finish>4) {iXB=1;iXC=2;}
-       else
-       if(finish>3) {iXB=1;iXC=1;}
-       else         {iXB=0;iXC=0;}
-       if(line==0) iYA=0;
-       else        iYA=finWidth;
-       if(height>4) {iYB=finWidth;iYC=srcPitch;}
-       else
-       if(height>3) {iYB=finWidth;iYC=finWidth;}
-       else         {iYB=0;iYC=0;}
+	line = 0;
 
+	for(; height; height-=1) {
+	
+		bP = (unsigned short *)srcPtr;
+		dP = (unsigned short *)(dstBitmap + line*dstPitch);
+		
+		for (finish = width; finish; finish -= 1) {
+				
+			//---------------------------------------    B1 B2
+			//                                         4  5  6 S2
+			//                                         1  2  3 S1
+			//                                           A1 A2
+			if(finish==finWidth)
+				iXA=0;
+			else
+				iXA=1;
+			
+			if(finish > 4) {
+				
+				iXB = 1;
+				iXC = 2;
+			} else if(finish > 3) {
+				
+				iXB = 1;
+				iXC = 1;
+			} else {
+				
+				iXB = 0;
+				iXC = 0;
+			}
+			
+			if(line == 0)
+				iYA = 0;
+			else
+				iYA = finWidth;
+				
+			if(height > 4) {
+				
+				iYB = finWidth;
+				iYC = srcPitch;
+			} else if(height > 3) {
+				
+				iYB = finWidth;
+				iYC = finWidth;
+			} else {
+				
+				iYB=0;
+				iYC=0;
+			}
 
-       colorB0 = *(bP- iYA - iXA);
-       colorB1 = *(bP- iYA);
-       colorB2 = *(bP- iYA + iXB);
-       colorB3 = *(bP- iYA + iXC);
+			colorB0 = *(bP - iYA - iXA);
+			colorB1 = *(bP - iYA);
+			colorB2 = *(bP - iYA + iXB);
+			colorB3 = *(bP - iYA + iXC);
 
-       color4 = *(bP  - iXA);
-       color5 = *(bP);
-       color6 = *(bP  + iXB);
-       colorS2 = *(bP + iXC);
+			color4 = *(bP - iXA);
+			color5 = *(bP);
+			color6 = *(bP + iXB);
+			colorS2 = *(bP + iXC);
 
-       color1 = *(bP  + iYB  - iXA);
-       color2 = *(bP  + iYB);
-       color3 = *(bP  + iYB  + iXB);
-       colorS1= *(bP  + iYB  + iXC);
+			color1 = *(bP + iYB - iXA);
+			color2 = *(bP + iYB);
+			color3 = *(bP + iYB + iXB);
+			colorS1 = *(bP + iYB + iXC);
 
-       colorA0 = *(bP + iYC - iXA);
-       colorA1 = *(bP + iYC);
-       colorA2 = *(bP + iYC + iXB);
-       colorA3 = *(bP + iYC + iXC);
+			colorA0 = *(bP + iYC - iXA);
+			colorA1 = *(bP + iYC);
+			colorA2 = *(bP + iYC + iXB);
+			colorA3 = *(bP + iYC + iXC);
 
-//--------------------------------------
-       if (color2 == color6 && color5 != color3)
-        {
-         product2b = product1b = color2;
-        }
-       else
-       if (color5 == color3 && color2 != color6)
-        {
-         product2b = product1b = color5;
-        }
-       else
-       if (color5 == color3 && color2 == color6)
-        {
-         register int r = 0;
+			//--------------------------------------
+			if (color2 == color6 && color5 != color3) {
+				
+				product2b = product1b = color2;
+			} else if(color5 == color3 && color2 != color6) {
+				
+				product2b = product1b = color5;
+			} else if(color5 == color3 && color2 == color6) {
+				
+				register int r = 0;
 
-         r += GET_RESULT ((color6), (color5), (color1),  (colorA1));
-         r += GET_RESULT ((color6), (color5), (color4),  (colorB1));
-         r += GET_RESULT ((color6), (color5), (colorA2), (colorS1));
-         r += GET_RESULT ((color6), (color5), (colorB2), (colorS2));
+				r += GET_RESULT((color6), (color5), (color1),  (colorA1));
+				r += GET_RESULT((color6), (color5), (color4),  (colorB1));
+				r += GET_RESULT((color6), (color5), (colorA2), (colorS1));
+				r += GET_RESULT((color6), (color5), (colorB2), (colorS2));
 
-         if (r > 0)
-          product2b = product1b = color6;
-         else
-         if (r < 0)
-          product2b = product1b = color5;
-         else
-          {
-           product2b = product1b = INTERPOLATE6 (color5, color6);
-          }
-        }
-       else
-        {
-         if (color6 == color3 && color3 == colorA1 && color2 != colorA2 && color3 != colorA0)
-             product2b = Q_INTERPOLATE6 (color3, color3, color3, color2);
-         else
-         if (color5 == color2 && color2 == colorA2 && colorA1 != color3 && color2 != colorA3)
-             product2b = Q_INTERPOLATE6 (color2, color2, color2, color3);
-         else
-             product2b = INTERPOLATE6 (color2, color3);
+				if(r > 0)
+					product2b = product1b = color6;
+				else if(r < 0)
+					product2b = product1b = color5;
+				else 
+					product2b = product1b = INTERPOLATE6(color5, color6);
+			} else {
+				
+				if(color6 == color3 && color3 == colorA1 && color2 != colorA2 && color3 != colorA0)
+					product2b = Q_INTERPOLATE6(color3, color3, color3, color2);
+				else if(color5 == color2 && color2 == colorA2 && colorA1 != color3 && color2 != colorA3)
+					product2b = Q_INTERPOLATE6(color2, color2, color2, color3);
+				else
+					product2b = INTERPOLATE6(color2, color3);
 
-         if (color6 == color3 && color6 == colorB1 && color5 != colorB2 && color6 != colorB0)
-             product1b = Q_INTERPOLATE6 (color6, color6, color6, color5);
-         else
-         if (color5 == color2 && color5 == colorB2 && colorB1 != color6 && color5 != colorB3)
-             product1b = Q_INTERPOLATE6 (color6, color5, color5, color5);
-         else
-             product1b = INTERPOLATE6 (color5, color6);
-        }
+				if(color6 == color3 && color6 == colorB1 && color5 != colorB2 && color6 != colorB0)
+					product1b = Q_INTERPOLATE6(color6, color6, color6, color5);
+				else if(color5 == color2 && color5 == colorB2 && colorB1 != color6 && color5 != colorB3)
+					product1b = Q_INTERPOLATE6(color6, color5, color5, color5);
+				else
+					product1b = INTERPOLATE6(color5, color6);
+			}
 
-       if (color5 == color3 && color2 != color6 && color4 == color5 && color5 != colorA2)
-        product2a = INTERPOLATE6 (color2, color5);
-       else
-       if (color5 == color1 && color6 == color5 && color4 != color2 && color5 != colorA0)
-        product2a = INTERPOLATE6(color2, color5);
-       else
-        product2a = color2;
+			if(color5 == color3 && color2 != color6 && color4 == color5 && color5 != colorA2)
+				product2a = INTERPOLATE6(color2, color5);
+			else if(color5 == color1 && color6 == color5 && color4 != color2 && color5 != colorA0)
+				product2a = INTERPOLATE6(color2, color5);
+			else
+				product2a = color2;
 
-       if (color2 == color6 && color5 != color3 && color1 == color2 && color2 != colorB2)
-        product1a = INTERPOLATE6(color2, color5);
-       else
-       if (color4 == color2 && color3 == color2 && color1 != color5 && color2 != colorB0)
-        product1a = INTERPOLATE6(color2, color5);
-       else
-        product1a = color5;
+			if(color2 == color6 && color5 != color3 && color1 == color2 && color2 != colorB2)
+				product1a = INTERPOLATE6(color2, color5);
+			else if(color4 == color2 && color3 == color2 && color1 != color5 && color2 != colorB0)
+				product1a = INTERPOLATE6(color2, color5);
+			else
+				product1a = color5;
 
-       *dP=(unsigned short)product1a;
-       *(dP+1)=(unsigned short)product1b;
-       *(dP+(srcPitch))=(unsigned short)product2a;
-       *(dP+1+(srcPitch))=(unsigned short)product2b;
+			*dP=(unsigned short)product1a;
+			*(dP+1)=(unsigned short)product1b;
+			*(dP+(srcPitch))=(unsigned short)product2a;
+			*(dP+1+(srcPitch))=(unsigned short)product2b;
 
-       bP += 1;
-       dP += 2;
-      }//end of for ( finish= width etc..)
+			bP += 1;
+			dP += 2;
+		}//end of for ( finish= width etc..)
 
-     line += 2;
-     srcPtr += srcPitch;
-	}; //endof: for (; height; height--)
-  }
+		line += 2;
+		srcPtr += srcPitch;
+	} //endof: for (; height; height--)
 }
 
 ////////////////////////////////////////////////////////////////////////
