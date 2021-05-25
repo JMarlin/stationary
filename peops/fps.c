@@ -39,10 +39,10 @@
 //
 //*************************************************************************// 
 
-#include "stdafx.h"
-
 #define _IN_FPS
 
+#include <sys/time.h>
+#include <inttypes.h>   
 #include "externals.h"
 #include "fps.h"
 #include "gpu.h"
@@ -419,11 +419,11 @@ void FrameSkip(void)
 void calcfps(void)                                     // fps calculations
 {
  static DWORD curticks,_ticks_since_last_update,lastticks;
- static long   fps_cnt = 0;
+ static int32_t   fps_cnt = 0;
  static DWORD  fps_tck = 1;
  static LARGE_INTEGER  CurrentTime;
  static LARGE_INTEGER  LastTime;
- static long   fpsskip_cnt = 0;
+ static int32_t   fpsskip_cnt = 0;
  static DWORD  fpsskip_tck = 1;
 
  if(IsPerformanceCounter)
@@ -526,7 +526,7 @@ void PCFrameCap (void)
        lastticks=curticks;
        LastTime.HighPart = CurrentTime.HighPart;
        LastTime.LowPart = CurrentTime.LowPart;
-       TicksToWait = (unsigned long)(CPUFrequency.LowPart / fFrameRateHz);
+       TicksToWait = (uint32_t)(CPUFrequency.LowPart / fFrameRateHz);
       }
     }
    else
@@ -549,7 +549,7 @@ void PCFrameCap (void)
 void PCcalcfps(void)
 {
  static DWORD curticks,_ticks_since_last_update,lastticks;
- static long  fps_cnt = 0;
+ static int32_t  fps_cnt = 0;
  static float fps_acc = 0;
  static LARGE_INTEGER  CurrentTime;
  static LARGE_INTEGER  LastTime;
@@ -673,7 +673,7 @@ void InitFPS(void)
 
 #define TIMEBASE 100000
 
-unsigned long timeGetTime()
+uint32_t timeGetTime()
 {
  struct timeval tv;
  gettimeofday(&tv, 0);                                 // well, maybe there are better ways
@@ -682,8 +682,8 @@ unsigned long timeGetTime()
 
 void FrameCap (void)
 {
- static unsigned long curticks, lastticks, _ticks_since_last_update;
- static unsigned long TicksToWait = 0;
+ static uint32_t curticks, lastticks, _ticks_since_last_update;
+ static uint32_t TicksToWait = 0;
  BOOL Waiting = TRUE;
 
   {
@@ -856,11 +856,11 @@ void FrameSkip(void)
 
 void calcfps(void)
 {
- static unsigned long curticks,_ticks_since_last_update,lastticks;
- static long   fps_cnt = 0;
- static unsigned long  fps_tck = 1;
- static long          fpsskip_cnt = 0;
- static unsigned long fpsskip_tck = 1;
+ static uint32_t curticks,_ticks_since_last_update,lastticks;
+ static int32_t   fps_cnt = 0;
+ static uint32_t  fps_tck = 1;
+ static int32_t          fpsskip_cnt = 0;
+ static uint32_t fpsskip_tck = 1;
 
   {
    curticks = timeGetTime();
@@ -902,8 +902,8 @@ void calcfps(void)
 
 void PCFrameCap (void)
 {
- static unsigned long curticks, lastticks, _ticks_since_last_update;
- static unsigned long TicksToWait = 0;
+ static uint32_t curticks, lastticks, _ticks_since_last_update;
+ static uint32_t TicksToWait = 0;
  BOOL Waiting = TRUE;
 
  while (Waiting)
@@ -915,7 +915,7 @@ void PCFrameCap (void)
     {
      Waiting = FALSE;
      lastticks = curticks;
-     TicksToWait = (TIMEBASE/ (unsigned long)fFrameRateHz);
+     TicksToWait = (TIMEBASE/ (uint32_t)fFrameRateHz);
     }
   }
 }
@@ -924,8 +924,8 @@ void PCFrameCap (void)
 
 void PCcalcfps(void)
 {
- static unsigned long curticks,_ticks_since_last_update,lastticks;
- static long  fps_cnt = 0;
+ static uint32_t curticks,_ticks_since_last_update,lastticks;
+ static int32_t  fps_cnt = 0;
  static float fps_acc = 0;
  float CurrentFPS=0;
 
@@ -955,7 +955,7 @@ void SetAutoFrameCap(void)
  if(iFrameLimit==1)
   {
    fFrameRateHz = fFrameRate;
-   dwFrameRateTicks=(TIMEBASE / (unsigned long)fFrameRateHz);
+   dwFrameRateTicks=(TIMEBASE / (uint32_t)fFrameRateHz);
    return;
   }
 
@@ -980,7 +980,7 @@ void SetAutoFrameCap(void)
            fFrameRateHz=33868800.0f/565031.25f;        // 59.94146
       else fFrameRateHz=33868800.0f/566107.50f;        // 59.82750
     }
-   dwFrameRateTicks=(TIMEBASE / (unsigned long)fFrameRateHz); 
+   dwFrameRateTicks=(TIMEBASE / (uint32_t)fFrameRateHz); 
   }
 }
 
@@ -1002,7 +1002,7 @@ void InitFPS(void)
    else               fFrameRateHz=fFrameRate;       // else set user framerate
   }
 
- dwFrameRateTicks=(TIMEBASE / (unsigned long)fFrameRateHz); 
+ dwFrameRateTicks=(TIMEBASE / (uint32_t)fFrameRateHz); 
 }
 
 #endif

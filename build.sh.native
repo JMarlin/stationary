@@ -1,0 +1,31 @@
+#!/bin/sh
+#-------------------------------------------------------------------------#
+# STATIONARY COMPONENTS                                                   #
+#-------------------------------------------------------------------------#
+gcc -c -o stationary_test_main.o stationary_test_main.c -g -DNATIVE_VERSION
+gcc -c -o list.o list.c -g -DNATIVE_VERSION
+gcc -c -o vertex.o vertex.c -g -DNATIVE_VERSION
+gcc -c -o triangle.o triangle.c -g -DNATIVE_VERSION
+gcc -c -o object.o object.c -g -DNATIVE_VERSION
+gcc -c -o cube.o cube.c -g -DNATIVE_VERSION
+gcc -c -o screentriangle.o screentriangle.c -g -DNATIVE_VERSION
+gcc -c -o zlist.o zlist.c -g -DNATIVE_VERSION
+gcc -c -o renderer.o renderer.c -g -DNATIVE_VERSION
+
+#-------------------------------------------------------------------------#
+# PEOPS COMPONENTS                                                        #
+#-------------------------------------------------------------------------#
+gcc -c -o cfg.o peops/cfg.c $(sdl2-config --cflags) -g -DNATIVE_VERSION
+gcc -c -o draw.o peops/draw.c $(sdl2-config --cflags) -g -DNATIVE_VERSION
+gcc -c -o DrawString.o peops/DrawString.c -g -DNATIVE_VERSION
+gcc -c -o fps.o peops/fps.c $(sdl2-config --cflags) -g -DNATIVE_VERSION
+gcc -c -o gpu.o peops/gpu.c $(sdl2-config --cflags) -g -DNATIVE_VERSION
+gcc -c -o key.o peops/key.c $(sdl2-config --cflags) -g -DNATIVE_VERSION
+gcc -c -o menu.o peops/menu.c $(sdl2-config --cflags) -g -DNATIVE_VERSION
+gcc -c -o prim.o peops/prim.c $(sdl2-config --cflags) -g -DNATIVE_VERSION
+gcc -c -o soft.o peops/soft.c $(sdl2-config --cflags) -g -DNATIVE_VERSION
+
+#-------------------------------------------------------------------------#
+# LINK                                                                    #
+#-------------------------------------------------------------------------#
+gcc -o stationary_test *.o $(sdl2-config --libs) -lm -g

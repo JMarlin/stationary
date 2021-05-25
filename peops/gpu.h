@@ -24,6 +24,8 @@
 //
 //*************************************************************************// 
 
+#include <inttypes.h>
+
 #ifndef _GPU_INTERNALS_H
 #define _GPU_INTERNALS_H
 
@@ -57,6 +59,11 @@
 
 /////////////////////////////////////////////////////////////////////////////
 
+int32_t GPUinit();
+int32_t GPUopen(void** disp,char * CapText,char * CfgFile);
+uint32_t GPUreadStatus(void);
+void GPUwriteStatus(uint32_t gdata);
+void GPUwriteData(uint32_t gdata);
 void           updateDisplay(void);
 void           SetAutoFrameCap(void);
 void           SetFixes(void);

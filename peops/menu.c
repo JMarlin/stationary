@@ -47,7 +47,9 @@
 //
 //*************************************************************************// 
 
-#include "stdafx.h"
+
+#include <inttypes.h>  
+#include <string.h>
 
 #ifdef _WINDOWS
 
@@ -66,7 +68,7 @@
 #include "menu.h"
 #include "gpu.h"
 
-unsigned long dwCoreFlags=0;
+uint32_t dwCoreFlags=0;
 
 ////////////////////////////////////////////////////////////////////////
 // create lists/stuff for fonts (actually there are no more lists, but I am too lazy to change the func names ;)

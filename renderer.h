@@ -1,12 +1,10 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+#include <inttypes.h>
 #include "vertex.h"
 #include "color.h"
-#include "triangle.h"
 #include "quad.h"
-#include "object.h"
-#include "screentriangle.h"
 
 #define GPU_DATA_CMD(c, o) ((((c)&0x7)<<5) | ((o)&0x1F))
 #define PRIM_POLY 0x01
@@ -25,21 +23,42 @@
 
 //Convert a point scaled such that 1.0, 1.0 is at the upper right-hand
 //corner of the screen and -1.0, -1.0 is at the bottom right to pixel coords
-#define TO_SCREEN_Y(y) ((int)((SCREEN_HEIGHT-(y*SCREEN_HEIGHT))/2.0))
-#define TO_SCREEN_X(x) ((int)((SCREEN_WIDTH+(x*SCREEN_HEIGHT))/2.0))
+#define TO_SCREEN_Y(y) ((uint16_t)((SCREEN_HEIGHT-(y*SCREEN_HEIGHT))/2.0))
+#define TO_SCREEN_X(x) ((uint16_t)((SCREEN_WIDTH+(x*SCREEN_HEIGHT))/2.0))
 
 typedef struct point {
     float x;
     float y;
 } point;
 
+typedef struct uv_point {
+    unsigned char u;
+    unsigned char v;
+} uv_point;
+
+#include "texture.h"
+#include "triangle.h"
+#include "object.h"
+#include "screentriangle.h"
+
 void S_set_fov_angle(int angle);
 int S_do_gpu_startup();
-void S_draw_tri(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x2, unsigned short y2, unsigned char r, unsigned char g, unsigned char b);
-void S_upload_image_data(unsigned long* src, unsigned short x, unsigned short y, unsigned short h, unsigned short w);
-void S_clear_framebuffer(unsigned short val);
-void S_draw_tri_textured(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x2, unsigned short y2, color24 c);
-void S_draw_quad_textured(unsigned short x0, unsigned short y0, unsigned short x1, unsigned short y1, unsigned short x2, unsigned short y2, unsigned short x3, unsigned short y3, color24 c);
+void S_draw_tri(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t r, uint8_t g, uint8_t b);
+Texture S_load_texture(uint32_t* src, uint16_t x, uint16_t y, uint8_t w, uint8_t h);
+void S_upload_image_data(uint32_t* src, uint16_t x, uint16_t y, uint16_t h, uint16_t w);
+void S_clear_framebuffer(uint16_t val);
+void S_fill_background(uint8_t r, uint8_t g, uint8_t b);
+void S_draw_tri_textured(
+    uint16_t x0, uint16_t y0,
+    uint16_t x1, uint16_t y1,
+    uint16_t x2, uint16_t y2,
+    Texture texture,
+    color24 c,
+    uint8_t v0, uint8_t u0,
+    uint8_t v1, uint8_t u1,
+    uint8_t v2, uint8_t u2
+);
+void S_draw_quad_textured(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint16_t x3, uint16_t y3, color24 c);
 void project(Vertex* v, ScreenPoint* p);
 void draw_triangle(Triangle* triangle);
 void draw_quad(Quad* quad);

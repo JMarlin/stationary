@@ -100,8 +100,6 @@
 //
 //*************************************************************************//
 
-#include "stdafx.h"
-
 #define _IN_DRAW
 
 #include "externals.h"
@@ -110,16 +108,26 @@
 #include "prim.h"
 #include "menu.h"
 
+#ifdef NATIVE_VERSION
+#include <SDL2/SDL.h>
+#else
+#include "../webshim.h"
+#endif
+
+#include <inttypes.h>
+#include <string.h>
+#include <stdlib.h>
+
 ////////////////////////////////////////////////////////////////////////////////////
 // misc globals
 ////////////////////////////////////////////////////////////////////////////////////
 int            iResX;
 int            iResY;
-long           lLowerpart;
+int32_t        lLowerpart;
 BOOL           bIsFirstFrame = TRUE;
 BOOL           bCheckMask=FALSE;
 unsigned short sSetMask=0;
-unsigned long  lSetMask=0;
+uint32_t       lSetMask=0;
 int            iDesktopCol=16;
 int            iShowFPS=0;
 int            iWinSize;
@@ -130,18 +138,18 @@ int            iDebugMode=0;
 int            iFVDisplay=0;
 PSXPoint_t     ptCursorPoint[8];
 unsigned short usCursorActive=0;
+
+#ifdef NATIVE_VERSION
 SDL_Window *sdl_window;
 SDL_Renderer *renderer;
 SDL_Texture *display;
+#else
+WS_Display* display;
+#endif
 
 unsigned int   LUT16to32[65536];
 unsigned int   RGBtoYUV[65536];
 
-// prototypes
-extern void hq2x_16( unsigned char * srcPtr, DWORD srcPitch, unsigned char * dstPtr, int width, int height);
-extern void hq3x_16( unsigned char * srcPtr, DWORD srcPitch, unsigned char * dstPtr, int width, int height);
-extern void hq2x_32( unsigned char * srcPtr, DWORD srcPitch, unsigned char * dstPtr, int width, int height);
-extern void hq3x_32( unsigned char * srcPtr, DWORD srcPitch, unsigned char * dstPtr, int width, int height);
 void NoStretchedBlit2x(void);
 void NoStretchedBlit3x(void);
 void StretchedBlit2x(void);
@@ -178,6 +186,7 @@ int InitLUTs(void) {
 	// Could just snip this and make it return void
 	// and make MMX detection it's own function
 
+#ifdef NATIVE_VERSION
 	#ifdef __GNUC__
 
 	__asm__ __volatile__ ("movl $1, %%eax":::"eax");
@@ -199,14 +208,17 @@ int InitLUTs(void) {
 	#endif
 
 	return nMMXsupport;
+#else
+	return 0;
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////
 // generic 2xSaI helpers
 ////////////////////////////////////////////////////////////////////////
 
-void *         pSaISmallBuff=NULL;
-void *         pSaIBigBuff=NULL;
+void *         pSaISmallBuff = 0;
+void *         pSaIBigBuff = 0;
 
 #define GET_RESULT(A, B, C, D) ((A != C || A != D) - (B != C || B != D))
 
@@ -807,7 +819,7 @@ void SuperEagle_ex8(unsigned char *srcPtr, DWORD srcPitch, unsigned char  *dstBi
 
 /////////////////////////
 
-static __inline void scale2x_32_def_whole(unsigned long* dst0, unsigned long* dst1, const unsigned long* src0, const unsigned long* src1, const unsigned long* src2, unsigned count) {
+static __inline void scale2x_32_def_whole(uint32_t* dst0, uint32_t* dst1, const uint32_t* src0, const uint32_t* src1, const uint32_t* src2, unsigned count) {
 
 	// first pixel
 	if(src0[0] != src2[0] && src1[0] != src1[1]) {
@@ -983,7 +995,7 @@ static __inline void scale3x_16_def_whole(unsigned short* dst0, unsigned short* 
 }
 
 
-static __inline void scale3x_32_def_whole(unsigned long* dst0, unsigned long* dst1, unsigned long* dst2, const unsigned long* src0, const unsigned long* src1, const unsigned long* src2, unsigned count) {
+static __inline void scale3x_32_def_whole(uint32_t* dst0, uint32_t* dst1, uint32_t* dst2, const uint32_t* src0, const uint32_t* src1, const uint32_t* src2, unsigned count) {
 
 	// first pixel
 	if (src0[0] != src2[0] && src1[0] != src1[1]) {
@@ -1132,15 +1144,15 @@ void Scale3x_ex6_5(unsigned char *srcPtr, DWORD srcPitch, unsigned char  *dstPtr
 			}
 
 
-			*(unsigned long*)(dstpix + looph*3*dstpitch + loopw*3*2) = E0;
-			*(unsigned long*)(dstpix + looph*3*dstpitch + (loopw*3+1)*2) = E1;
-			*(unsigned long*)(dstpix + looph*3*dstpitch + (loopw*3+2)*2) = E2;
-			*(unsigned long*)(dstpix + (looph*3+1)*dstpitch + loopw*3*2) = E3;
-			*(unsigned long*)(dstpix + (looph*3+1)*dstpitch + (loopw*3+1)*2) = E4;
-			*(unsigned long*)(dstpix + (looph*3+1)*dstpitch + (loopw*3+2)*2) = E5;
-			*(unsigned long*)(dstpix + (looph*3+2)*dstpitch + loopw*3*2) = E6;
-			*(unsigned long*)(dstpix + (looph*3+2)*dstpitch + (loopw*3+1)*2) = E7;
-			*(unsigned long*)(dstpix + (looph*3+2)*dstpitch + (loopw*3+2)*2) = E8;
+			*(uint32_t*)(dstpix + looph*3*dstpitch + loopw*3*2) = E0;
+			*(uint32_t*)(dstpix + looph*3*dstpitch + (loopw*3+1)*2) = E1;
+			*(uint32_t*)(dstpix + looph*3*dstpitch + (loopw*3+2)*2) = E2;
+			*(uint32_t*)(dstpix + (looph*3+1)*dstpitch + loopw*3*2) = E3;
+			*(uint32_t*)(dstpix + (looph*3+1)*dstpitch + (loopw*3+1)*2) = E4;
+			*(uint32_t*)(dstpix + (looph*3+1)*dstpitch + (loopw*3+2)*2) = E5;
+			*(uint32_t*)(dstpix + (looph*3+2)*dstpitch + loopw*3*2) = E6;
+			*(uint32_t*)(dstpix + (looph*3+2)*dstpitch + (loopw*3+1)*2) = E7;
+			*(uint32_t*)(dstpix + (looph*3+2)*dstpitch + (loopw*3+2)*2) = E8;
 		}
 	}
 }
@@ -1152,22 +1164,22 @@ void Scale3x_ex8(unsigned char *srcPtr, DWORD srcPitch, unsigned char  *dstPtr, 
 	unsigned char * dstpix = dstPtr;
 	const int srcpitch = srcPitch;
 	const int dstpitch = srcPitch*3;
-	unsigned long E0, E1, E2, E3, E4, E5, E6, E7, E8;
-	unsigned long A, B, C, D, E, F, G, H, I;
+	uint32_t E0, E1, E2, E3, E4, E5, E6, E7, E8;
+	uint32_t A, B, C, D, E, F, G, H, I;
 	
 	for(looph = 0; looph < height; ++looph) {
 		
 		for(loopw = 0; loopw < width; ++ loopw) {
 			
-			A = *(unsigned long*)(srcpix + (MAX(0,looph-1)*srcpitch) + (4*MAX(0,loopw-1)));
-			B = *(unsigned long*)(srcpix + (MAX(0,looph-1)*srcpitch) + (4*loopw));
-			C = *(unsigned long*)(srcpix + (MAX(0,looph-1)*srcpitch) + (4*MIN(width-1,loopw+1)));
-			D = *(unsigned long*)(srcpix + (looph*srcpitch) + (4*MAX(0,loopw-1)));
-			E = *(unsigned long*)(srcpix + (looph*srcpitch) + (4*loopw));
-			F = *(unsigned long*)(srcpix + (looph*srcpitch) + (4*MIN(width-1,loopw+1)));
-			G = *(unsigned long*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (4*MAX(0,loopw-1)));
-			H = *(unsigned long*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (4*loopw));
-			I = *(unsigned long*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (4*MIN(width-1,loopw+1)));
+			A = *(uint32_t*)(srcpix + (MAX(0,looph-1)*srcpitch) + (4*MAX(0,loopw-1)));
+			B = *(uint32_t*)(srcpix + (MAX(0,looph-1)*srcpitch) + (4*loopw));
+			C = *(uint32_t*)(srcpix + (MAX(0,looph-1)*srcpitch) + (4*MIN(width-1,loopw+1)));
+			D = *(uint32_t*)(srcpix + (looph*srcpitch) + (4*MAX(0,loopw-1)));
+			E = *(uint32_t*)(srcpix + (looph*srcpitch) + (4*loopw));
+			F = *(uint32_t*)(srcpix + (looph*srcpitch) + (4*MIN(width-1,loopw+1)));
+			G = *(uint32_t*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (4*MAX(0,loopw-1)));
+			H = *(uint32_t*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (4*loopw));
+			I = *(uint32_t*)(srcpix + (MIN(height-1,looph+1)*srcpitch) + (4*MIN(width-1,loopw+1)));
 
 			if(B != H && D != F) {
 				
@@ -1194,15 +1206,15 @@ void Scale3x_ex8(unsigned char *srcPtr, DWORD srcPitch, unsigned char  *dstPtr, 
 			}
 
 
-			*(unsigned long*)(dstpix + looph*3*dstpitch + loopw*3*4) = E0;
-			*(unsigned long*)(dstpix + looph*3*dstpitch + (loopw*3+1)*4) = E1;
-			*(unsigned long*)(dstpix + looph*3*dstpitch + (loopw*3+2)*4) = E2;
-			*(unsigned long*)(dstpix + (looph*3+1)*dstpitch + loopw*3*4) = E3;
-			*(unsigned long*)(dstpix + (looph*3+1)*dstpitch + (loopw*3+1)*4) = E4;
-			*(unsigned long*)(dstpix + (looph*3+1)*dstpitch + (loopw*3+2)*4) = E5;
-			*(unsigned long*)(dstpix + (looph*3+2)*dstpitch + loopw*3*4) = E6;
-			*(unsigned long*)(dstpix + (looph*3+2)*dstpitch + (loopw*3+1)*4) = E7;
-			*(unsigned long*)(dstpix + (looph*3+2)*dstpitch + (loopw*3+2)*4) = E8;
+			*(uint32_t*)(dstpix + looph*3*dstpitch + loopw*3*4) = E0;
+			*(uint32_t*)(dstpix + looph*3*dstpitch + (loopw*3+1)*4) = E1;
+			*(uint32_t*)(dstpix + looph*3*dstpitch + (loopw*3+2)*4) = E2;
+			*(uint32_t*)(dstpix + (looph*3+1)*dstpitch + loopw*3*4) = E3;
+			*(uint32_t*)(dstpix + (looph*3+1)*dstpitch + (loopw*3+1)*4) = E4;
+			*(uint32_t*)(dstpix + (looph*3+1)*dstpitch + (loopw*3+2)*4) = E5;
+			*(uint32_t*)(dstpix + (looph*3+2)*dstpitch + loopw*3*4) = E6;
+			*(uint32_t*)(dstpix + (looph*3+2)*dstpitch + (loopw*3+1)*4) = E7;
+			*(uint32_t*)(dstpix + (looph*3+2)*dstpitch + (loopw*3+2)*4) = E8;
 		}
 	}
 }
@@ -2324,52 +2336,85 @@ int           Xpitch,depth=32;
 char *        Xpixels;
 char *        pCaptionText;
 
-SDL_Surface *display,*XFimage,*XPimage=NULL;
+#ifdef NATIVE_VERSION
+SDL_Surface *XFimage,*XPimage=0;
 
 SDL_Surface *Ximage16,*Ximage24;
 
-//static Uint32 sdl_mask=SDL_HWSURFACE|SDL_HWACCEL;/*place or remove some flags*/
 SDL_Rect rectdst,rectsrc;
+#else
+
+WS_ImgBuf *XFimage,*XPimage=0;
+
+WS_ImgBuf *Ximage16,*Ximage24;
+
+WS_Rect rectdst, rectsrc;
+
+#endif
 
 void DestroyDisplay(void) {
+
+	#ifdef NATIVE_VERSION	
+		if(display) {
+
+			if(Ximage16) SDL_FreeSurface(Ximage16);
+			if(Ximage24) SDL_FreeSurface(Ximage24);
+			if(XFimage) SDL_FreeSurface(XFimage);
+
+			SDL_DestroyTexture(display);
+			SDL_DestroyRenderer(renderer);
+			SDL_DestroyWindow(sdl_window);
+		}
+
+		SDL_QuitSubSystem(SDL_INIT_VIDEO);
+	#else
 	
-	if(display) {
+		if(display) {
 
-		if(Ximage16) SDL_FreeSurface(Ximage16);
-		if(Ximage24) SDL_FreeSurface(Ximage24);
+			if(Ximage16) WS_DestroyImgBuf(Ximage16);
+			if(Ximage24) WS_DestroyImgBuf(Ximage24);
+			if(XFimage) WS_DestroyImgBuf(XFimage);
 
-		if(XFimage) SDL_FreeSurface(XFimage);
+			WS_DestroyDisplay(display);
+		}
 
-		SDL_FreeTexture(display);//the display is also a surface in SDL
-		SDL_DestroyRenderer(renderer);
-		SDL_DestroyWindow(sdl_window);
-	}
-
-    SDL_QuitSubSystem(SDL_INIT_VIDEO);
+		WS_StopRenderLoop();
+	#endif
 }
 
 void SetDisplay(void){
 
-    if(iWindowMode)
-        display = SDL_SetVideoMode(iResX,iResY,depth,sdl_mask);
-    else
-	    display = SDL_SetVideoMode(iResX,iResY,depth,SDL_FULLSCREEN|sdl_mask);
-}
-
-void CreateDisplay(void) {
-
-	if(SDL_InitSubSystem(SDL_INIT_VIDEO)<0) {
-	  fprintf (stderr,"(x) Failed to Init SDL!!!\n");
-	  return;
-   }
-
-	sdl_window = SDL_CreateWindow("Stationary", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, iResX, iResY, !iWindowMode*SDL_WINDOW_FULLSCREEN_DESKTOP)
+#ifdef NATIVE_VERSION
+    sdl_window = SDL_CreateWindow("Stationary", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, iResX, iResY, !iWindowMode*SDL_WINDOW_FULLSCREEN_DESKTOP);
 	renderer = SDL_CreateRenderer(sdl_window, -1, 0);
 	display = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_ARGB8888, SDL_TEXTUREACCESS_STREAMING, 320, 240);
 	Ximage16 = SDL_CreateRGBSurfaceFrom((void*)psxVub, 1024,512,16,2048 ,0x1f,0x1f<<5,0x1f<<10,0);
 	Ximage24 = SDL_CreateRGBSurfaceFrom((void*)psxVub, 1024*2/3,512 ,24,2048 ,0xFF0000,0xFF00,0xFF,0);
-	XFimage = SDL_CreateRGBSurface(sdl_mask,170,15,depth,0x00ff0000,0x0000ff00,0x000000ff,0);
-	iColDepth=depth;
+	XFimage = SDL_CreateRGBSurface(0,170,15,depth,0x00ff0000,0x0000ff00,0x000000ff,0);
+	iColDepth = depth;
+#else
+	display = WS_CreateDisplay(320, 240);
+	Ximage16 = WS_CreateImgBufFrom((void*)psxVub, 1024, 512 , IMG_BUF_DEPTH_16);
+	Ximage24 = WS_CreateImgBufFrom((void*)psxVub, 1024*2/3,512 ,IMG_BUF_DEPTH_24);
+	XFimage = WS_CreateImgBuf(70,15, IMG_BUF_DEPTH_24);
+	iColDepth = depth;
+#endif
+}
+
+void CreateDisplay(void) {
+
+#ifdef NATIVE_VERSION
+	if(SDL_InitSubSystem(SDL_INIT_VIDEO)<0) {
+	  fprintf (stderr,"(x) Failed to Init SDL!!!\n");
+	  return;
+   }
+#endif
+
+	SetDisplay();
+
+#ifndef NATIVE_VERSION
+	WS_StartRenderLoop();
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -2393,7 +2438,7 @@ void ShowGunCursor(unsigned char * surf,int iPitch)
 
  if(iColDepth==32)                                     // 32 bit color depth
   {
-   const unsigned long crCursorColor32[8]={0xffff0000,0xff00ff00,0xff0000ff,0xffff00ff,0xffffff00,0xff00ffff,0xffffffff,0xff7f7f7f};
+   const uint32_t crCursorColor32[8]={0xffff0000,0xff00ff00,0xff0000ff,0xffff00ff,0xffffff00,0xff00ffff,0xffffffff,0xff7f7f7f};
 
    surf+=PreviousPSXDisplay.Range.x0<<2;               // -> add x left border
 
@@ -2409,9 +2454,9 @@ void ShowGunCursor(unsigned char * surf,int iPitch)
        ey=ty+6;if(ey>dy) ey=dy;
 
        for(x=tx,y=sy;y<ey;y+=2)                        // -> do dotted y line
-        *((unsigned long *)((surf)+(y*iPitch)+x*4))=crCursorColor32[iPlayer];
+        *((uint32_t *)((surf)+(y*iPitch)+x*4))=crCursorColor32[iPlayer];
        for(y=ty,x=sx;x<ex;x+=2)                        // -> do dotted x line
-        *((unsigned long *)((surf)+(y*iPitch)+x*4))=crCursorColor32[iPlayer];
+        *((uint32_t *)((surf)+(y*iPitch)+x*4))=crCursorColor32[iPlayer];
       }
     }
   }
@@ -2448,6 +2493,15 @@ extern time_t tStart;
 
 void NoStretchSwap(void)
 {
+
+#ifdef NATIVE_VERSION
+ SDL_Texture* tex;
+
+ SDL_RenderClear(renderer);
+#else
+ WS_ClearDisplay(display);
+#endif
+
  static int iOldDX=0;
  static int iOldDY=0;
 
@@ -2478,9 +2532,14 @@ void NoStretchSwap(void)
  rectdst.y=iY;
  rectdst.w=iDX;
  rectdst.h=iDY;
-//   SDL_BlitSurface(XCimage,NULL,display,NULL);
 
-   SDL_FillRect(display,NULL,0);
+/*
+	//Shit if I know what this is supposed to be doing
+ 	tex = SDL_CreateTextureFromSurface(renderer, XCimage);
+ 	SDL_RenderCopy(renderer, tex, NULL, &rectdst);
+	SDL_DestroyTexture(tex);
+	*/
+   ////SDL_BlitSurface(XCimage,NULL,display,NULL);
 
    iOldDX=iDX;iOldDY=iDY;
   }
@@ -2492,21 +2551,35 @@ void NoStretchSwap(void)
  {
 
 	 rectsrc.w=PreviousPSXDisplay.Range.x1/*2/3*/;
-	 SDL_BlitSurface(Ximage24,&rectsrc,display,&rectdst);
+
+#ifdef NATIVE_VERSION
+	 tex = SDL_CreateTextureFromSurface(renderer, Ximage24);
+ 	 SDL_RenderCopy(renderer, tex, &rectsrc, &rectdst);
+	 //SDL_BlitSurface(Ximage24,&rectsrc,display,&rectdst);
+#else
+	WS_BlitToDisplay(display, Ximage24, &rectsrc, &rectdst);
+#endif
  }
  else
  {
 
 	 rectsrc.w=PreviousPSXDisplay.Range.x1;
-	 SDL_BlitSurface(Ximage16,&rectsrc,display,&rectdst);
+#ifdef NATIVE_VERSION
+	 SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, Ximage16);
+ 	 SDL_RenderCopy(renderer, tex, &rectsrc, &rectdst);
+	 //SDL_BlitSurface(Ximage16,&rectsrc,display,&rectdst);
+#else
+	WS_BlitToDisplay(display, Ximage16, &rectsrc, &rectdst);
+#endif
  }
 
  if(iODX) PreviousPSXDisplay.Range.x1=iODX;
  if(iODY) PreviousPSXDisplay.DisplayMode.y=iODY;
 
+#ifdef NATIVE_VERSION
  if(ulKeybits&KEY_SHOWFPS) //DisplayText();               // paint menu text
   {
-   if(szDebugText[0] && ((time(NULL) - tStart) < 2))
+   if(szDebugText[0] && ((time(0) - tStart) < 2))
     {
      strcpy(szDispBuf,szDebugText);
     }
@@ -2516,13 +2589,18 @@ void NoStretchSwap(void)
      strcat(szDispBuf,szMenuBuf);
     }
 
-    SDL_WM_SetCaption(szDispBuf,NULL); //just a quick fix,
+    SDL_SetWindowTitle(sdl_window, szDispBuf);
   }
+#endif
 
  if(XPimage) DisplayPic();
 
- SDL_Flip(display);
-
+#ifdef NATIVE_VERSION
+ SDL_RenderPresent(renderer);
+ SDL_DestroyTexture(tex);
+#else
+ WS_UpdateDisplay(display);
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -2543,8 +2621,12 @@ void DoBufferSwap(void)                                // SWAP BUFFERS
    }
 */
 
-
- SDL_Surface *buf;
+#ifdef NATIVE_VERSION
+ SDL_RenderClear(renderer);
+ SDL_Texture* tex;
+#else
+ WS_ClearDisplay(display);
+#endif
 
  if(iUseNoStretchBlt<2)
   {
@@ -2566,16 +2648,35 @@ void DoBufferSwap(void)                                // SWAP BUFFERS
  if(PSXDisplay.RGB24)
  {
 
-	 SDL_SoftStretch(buf=SDL_DisplayFormat(Ximage24), &rectsrc,
-                    display, &rectdst);
+#ifdef NATIVE_VERSION
+	 tex = SDL_CreateTextureFromSurface(renderer, Ximage24);
+
+ 	 if(SDL_RenderCopy(renderer, tex, &rectsrc, &rectdst) < 0) {
+		 printf("%s\n", SDL_GetError());
+	 }
+	 //SDL_SoftStretch(buf=SDL_ConvertSurfaceFormat(Ximage24, SDL_GetWindowPixelFormat(sdl_window), 0), &rectsrc,
+     //               display, &rectdst);
+#else
+	WS_BlitToDisplay(display, Ximage24, &rectsrc, &rectdst);
+#endif
  }
  else
  {
-	 SDL_SoftStretch(buf=SDL_DisplayFormat(Ximage16), &rectsrc,
-                    display, &rectdst);
- }
-SDL_FreeSurface(buf);
 
+#ifdef NATIVE_VERSION
+	 tex = SDL_CreateTextureFromSurface(renderer, Ximage16);
+
+     if(SDL_RenderCopy(renderer, tex, &rectsrc, &rectdst) < 0) {
+		 printf("%s\n", SDL_GetError());
+	 }
+	 //SDL_SoftStretch(buf=SDL_ConvertSurfaceFormat(Ximage16, SDL_GetWindowPixelFormat(sdl_window), 0), &rectsrc,
+     //               display, &rectdst);
+#else
+	WS_BlitToDisplay(display, Ximage16, &rectsrc, &rectdst);
+#endif
+ }
+
+#ifdef NATIVE_VERSION
  if(ulKeybits&KEY_SHOWFPS) //DisplayText();               // paint menu text
   {
    if(szDebugText[0] && ((time(NULL) - tStart) < 2))
@@ -2588,30 +2689,46 @@ SDL_FreeSurface(buf);
      strcat(szDispBuf,szMenuBuf);
     }
 
-    SDL_WM_SetCaption(szDispBuf,NULL); //just a quick fix,
+    SDL_SetWindowTitle(sdl_window, szDispBuf);
   }
+#endif
 
  if(XPimage) DisplayPic();
 
- SDL_Flip(display);
+#ifdef NATIVE_VERSION
+ SDL_RenderPresent(renderer);
+ SDL_DestroyTexture(tex);
+#else
+WS_UpdateDisplay(display);
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////
 
 void DoClearScreenBuffer(void)                         // CLEAR DX BUFFER
 {
+#ifdef NATIVE_VERSION
  /*
  SDL_BlitSurface(XCimage,NULL,display,NULL);*/
- SDL_FillRect(display,NULL,0);
- SDL_Flip(display);
+ SDL_RenderClear(renderer);
+ SDL_RenderPresent(renderer);
+#else
+ WS_ClearDisplay(display);
+ WS_UpdateDisplay(display);
+#endif
 }
 
 ////////////////////////////////////////////////////////////////////////
 
 void DoClearFrontBuffer(void)                          // CLEAR DX BUFFER
 {
- SDL_FillRect(display,NULL,0);
- SDL_Flip(display);
+#ifdef NATIVE_VERSION
+ SDL_RenderClear(renderer);
+ SDL_RenderPresent(renderer);
+#else
+ WS_ClearDisplay(display);
+ WS_UpdateDisplay(display);
+#endif
 }
 
 
@@ -2645,11 +2762,11 @@ void Xcleanup()                                        // X CLEANUP
 
 ////////////////////////////////////////////////////////////////////////
 
-unsigned long ulInitDisplay(void)
+void* ulInitDisplay(void)
 {
  CreateDisplay();                                      // x stuff
  Xinitialize();                                        // init x
- return (unsigned long)display;
+ return (void*)display;
 }
 
 ////////////////////////////////////////////////////////////////////////
@@ -2703,7 +2820,7 @@ void CreatePic(unsigned char * pMem)
  else
  if(iDesktopCol==32)
   {
-   unsigned long l;
+   uint32_t l;
    for(y=0;y<96;y++)
     {
      for(x=0;x<128;x++)
@@ -2712,12 +2829,12 @@ void CreatePic(unsigned char * pMem)
        l|=(*(pMem+1))<<8;
        l|=(*(pMem+2))<<16;
        pMem+=3;
-       *((unsigned long *)(ps+y*512+x*4))=l;
+       *((uint32_t *)(ps+y*512+x*4))=l;
       }
     }
   }
 
-
+#ifdef NATIVE_VERSION
  XPimage = SDL_CreateRGBSurfaceFrom((void *)p,128,96,
 			depth,depth*16,
 			0x00ff0000,0x0000ff00,0x000000ff,
@@ -2725,6 +2842,9 @@ void CreatePic(unsigned char * pMem)
 			    *Set a nonzero value here.
 			    *and set the ALPHA flag ON
 			    */
+#else
+ XPimage = WS_CreateImgBufFrom((void*)p, 128, 96, IMG_BUF_DEPTH_24);
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -2733,8 +2853,13 @@ void DestroyPic(void)
 {
  if(XPimage)
   {
-   SDL_FillRect(display,NULL,0);
+#ifdef NATIVE_VERSION
+   SDL_RenderClear(renderer);
    SDL_FreeSurface(XPimage);
+#else
+   WS_ClearDisplay(display);
+   WS_DestroyImgBuf(XPimage);
+#endif
    XPimage=0;
   }
 }
@@ -2747,7 +2872,18 @@ void DisplayPic(void)
  rectdst.y=0;
  rectdst.w=128;
  rectdst.h=96;
- SDL_BlitSurface(XPimage,NULL,display,&rectdst);
+
+#ifdef NATIVE_VERSION
+  SDL_RenderClear(renderer);
+ SDL_Texture* tex = SDL_CreateTextureFromSurface(renderer, XPimage);
+ SDL_RenderCopy(renderer, tex, NULL, &rectdst);
+ SDL_RenderPresent(renderer);
+ SDL_DestroyTexture(tex);
+#else
+ WS_ClearDisplay(display);
+ WS_BlitToDisplay(display, XPimage, 0, &rectdst);
+ WS_UpdateDisplay(display);
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////

@@ -90,7 +90,11 @@
 //
 //*************************************************************************//
 
-#include "stdafx.h"
+
+#include <inttypes.h>   
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #define _IN_CFG
 

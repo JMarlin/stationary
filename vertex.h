@@ -8,6 +8,8 @@ typedef struct Vertex {
     float y;
     float z;
     color24 c;
+    unsigned char u;
+    unsigned char v;
 } Vertex;
 
 void Vertex_clone(Vertex *src, Vertex* dst);

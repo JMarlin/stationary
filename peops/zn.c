@@ -24,7 +24,8 @@
 //
 //*************************************************************************// 
 
-#include "stdafx.h"
+
+#include <inttypes.h>   
 
 #define _IN_ZN
 
@@ -35,42 +36,42 @@
 // --------------------------------------------------- //
 
 #ifdef _WINDOWS
-long CALLBACK GPUopen(HWND hwndGPU);
+int32_t  GPUopen(HWND hwndGPU);
 #else
-long GPUopen(unsigned long * disp,const char * CapText,const char * CfgFile);
+int32_t GPUopen(uint32_t  * disp,const char * CapText,const char * CfgFile);
 #endif
-void CALLBACK GPUdisplayText(char * pText);
-void CALLBACK GPUdisplayFlags(unsigned long dwFlags);
-void CALLBACK GPUmakeSnapshot(void);
-long CALLBACK GPUinit();
-long CALLBACK GPUclose();
-long CALLBACK GPUshutdown();
-void CALLBACK GPUcursor(int iPlayer,int x,int y);
-void CALLBACK GPUupdateLace(void);
-unsigned long CALLBACK GPUreadStatus(void);
-void CALLBACK GPUwriteStatus(unsigned long gdata);
-void CALLBACK GPUreadDataMem(unsigned long * pMem, int iSize);
-unsigned long CALLBACK GPUreadData(void);
-void CALLBACK GPUwriteDataMem(unsigned long * pMem, int iSize);
-void CALLBACK GPUwriteData(unsigned long gdata);
-void CALLBACK GPUsetMode(unsigned long gdata);
-long CALLBACK GPUgetMode(void);
-long CALLBACK GPUdmaChain(unsigned long * baseAddrL, unsigned long addr);
-long CALLBACK GPUconfigure(void);
-void CALLBACK GPUabout(void);
-long CALLBACK GPUtest(void);
-long CALLBACK GPUfreeze(unsigned long ulGetFreezeData,void * pF);
-void CALLBACK GPUgetScreenPic(unsigned char * pMem);
-void CALLBACK GPUshowScreenPic(unsigned char * pMem);
+void  GPUdisplayText(char * pText);
+void  GPUdisplayFlags(uint32_t  dwFlags);
+void  GPUmakeSnapshot(void);
+int32_t  GPUinit();
+int32_t  GPUclose();
+int32_t  GPUshutdown();
+void  GPUcursor(int iPlayer,int x,int y);
+void  GPUupdateLace(void);
+uint32_t   GPUreadStatus(void);
+void  GPUwriteStatus(uint32_t  gdata);
+void  GPUreadDataMem(uint32_t  * pMem, int iSize);
+uint32_t   GPUreadData(void);
+void  GPUwriteDataMem(uint32_t  * pMem, int iSize);
+void  GPUwriteData(uint32_t  gdata);
+void  GPUsetMode(uint32_t  gdata);
+int32_t  GPUgetMode(void);
+int32_t  GPUdmaChain(uint32_t  * baseAddrL, uint32_t  addr);
+int32_t  GPUconfigure(void);
+void  GPUabout(void);
+int32_t  GPUtest(void);
+int32_t  GPUfreeze(uint32_t  ulGetFreezeData,void * pF);
+void  GPUgetScreenPic(unsigned char * pMem);
+void  GPUshowScreenPic(unsigned char * pMem);
 #ifndef _WINDOWS
-void CALLBACK GPUkeypressed(int keycode);
+void  GPUkeypressed(int keycode);
 #endif
 
 // --------------------------------------------------- // 
 // - zn gpu interface -------------------------------- // 
 // --------------------------------------------------- // 
 
-unsigned long dwGPUVersion=0;
+uint32_t  dwGPUVersion=0;
 int           iGPUHeight=512;
 int           iGPUHeightMask=511;
 int           GlobalTextIL=0;
@@ -82,10 +83,10 @@ int           iTileCheat=0;
 
 typedef struct GPUOTAG
  {
-  unsigned long  Version;        // Version of structure - currently 1
-  long           hWnd;           // Window handle
-  unsigned long  ScreenRotation; // 0 = 0CW, 1 = 90CW, 2 = 180CW, 3 = 270CW = 90CCW
-  unsigned long  GPUVersion;     // 0 = a, 1 = b, 2 = c
+  uint32_t   Version;        // Version of structure - currently 1
+  int32_t           hWnd;           // Window handle
+  uint32_t   ScreenRotation; // 0 = 0CW, 1 = 90CW, 2 = 180CW, 3 = 270CW = 90CCW
+  uint32_t   GPUVersion;     // 0 = a, 1 = b, 2 = c
   const char*    GameName;       // NULL terminated string
   const char*    CfgFile;        // NULL terminated string
  } GPUConfiguration_t;
@@ -94,21 +95,21 @@ typedef struct GPUOTAG
 // --------------------------------------------------- // 
 // --------------------------------------------------- // 
 
-void CALLBACK ZN_GPUdisplayFlags(unsigned long dwFlags)
+void  ZN_GPUdisplayFlags(uint32_t  dwFlags)
 {
  GPUdisplayFlags(dwFlags);
 }
 
 // --------------------------------------------------- //
 
-void CALLBACK ZN_GPUmakeSnapshot(void)
+void  ZN_GPUmakeSnapshot(void)
 {
  GPUmakeSnapshot();
 }
 
 // --------------------------------------------------- //
 
-long CALLBACK ZN_GPUinit()
+int32_t  ZN_GPUinit()
 {                                                      // we always set the vram size to 2MB, if the ZN interface is used
  iGPUHeight=1024;
  iGPUHeightMask=1023;
@@ -120,77 +121,81 @@ long CALLBACK ZN_GPUinit()
 
 extern char * pConfigFile;
 
-long CALLBACK ZN_GPUopen(void * vcfg)
+int32_t  ZN_GPUopen(void * vcfg)
 {
- GPUConfiguration_t * cfg=(GPUConfiguration_t *)vcfg;
- long lret;
 
- if(!cfg)            return -1;
- if(cfg->Version!=1) return -1;
+//----- We don't need this for our purposes------
+// GPUConfiguration_t * cfg=(GPUConfiguration_t *)vcfg;
+// int32_t lret;
+//
+// if(!cfg)            return -1;
+// if(cfg->Version!=1) return -1;
+//
+//#ifdef _WINDOWS
+// pConfigFile=(char *)cfg->CfgFile;                     // only used in this open, so we can store this temp pointer here without danger... don't access it later, though!
+// lret=GPUopen((HWND)cfg->hWnd);
+//#else
+// lret=GPUopen(&cfg->hWnd,cfg->GameName,cfg->CfgFile);
+//#endif
+//
+///*
+// if(!lstrcmp(cfg->GameName,"kikaioh")     ||
+//    !lstrcmp(cfg->GameName,"sr2j")        ||
+//    !lstrcmp(cfg->GameName,"rvschool_a"))
+//  iTileCheat=1;
+//*/
+//
+//// some ZN games seem to erase the cluts with a 'white' TileS... strange..
+//// I've added a cheat to avoid this issue. We can set it globally (for
+//// all ZiNc games) without much risk
+//
+//iTileCheat=1;
+///
+// dwGPUVersion=cfg->GPUVersion;
+//
+// return lret;
 
-#ifdef _WINDOWS
- pConfigFile=(char *)cfg->CfgFile;                     // only used in this open, so we can store this temp pointer here without danger... don't access it later, though!
- lret=GPUopen((HWND)cfg->hWnd);
-#else
- lret=GPUopen(&cfg->hWnd,cfg->GameName,cfg->CfgFile);
-#endif
-
-/*
- if(!lstrcmp(cfg->GameName,"kikaioh")     ||
-    !lstrcmp(cfg->GameName,"sr2j")        ||
-    !lstrcmp(cfg->GameName,"rvschool_a"))
-  iTileCheat=1;
-*/
-
- // some ZN games seem to erase the cluts with a 'white' TileS... strange..
- // I've added a cheat to avoid this issue. We can set it globally (for
- // all ZiNc games) without much risk
-
- iTileCheat=1;
-
- dwGPUVersion=cfg->GPUVersion;
-
- return lret;
+   return 0;
 }
 
 // --------------------------------------------------- //
 
-long CALLBACK ZN_GPUclose()
+int32_t  ZN_GPUclose()
 {
  return GPUclose();
 }
 
 // --------------------------------------------------- // 
 
-long CALLBACK ZN_GPUshutdown()
+int32_t  ZN_GPUshutdown()
 {
  return GPUshutdown();
 }
 
 // --------------------------------------------------- // 
 
-void CALLBACK ZN_GPUupdateLace(void)
+void  ZN_GPUupdateLace(void)
 {
  GPUupdateLace();
 }
 
 // --------------------------------------------------- // 
 
-unsigned long CALLBACK ZN_GPUreadStatus(void)
+uint32_t   ZN_GPUreadStatus(void)
 {
  return GPUreadStatus();
 }
 
 // --------------------------------------------------- // 
 
-void CALLBACK ZN_GPUwriteStatus(unsigned long gdata)
+void  ZN_GPUwriteStatus(uint32_t  gdata)
 {
  GPUwriteStatus(gdata);
 }
 
 // --------------------------------------------------- // 
 
-long CALLBACK ZN_GPUdmaSliceOut(unsigned long *baseAddrL, unsigned long addr, unsigned long iSize)
+int32_t  ZN_GPUdmaSliceOut(uint32_t  *baseAddrL, uint32_t  addr, uint32_t  iSize)
 {
  GPUreadDataMem(baseAddrL+addr,iSize);
  return 0;
@@ -198,70 +203,70 @@ long CALLBACK ZN_GPUdmaSliceOut(unsigned long *baseAddrL, unsigned long addr, un
 
 // --------------------------------------------------- // 
 
-unsigned long CALLBACK ZN_GPUreadData(void)
+uint32_t   ZN_GPUreadData(void)
 {
  return GPUreadData();
 }
 
 // --------------------------------------------------- // 
 
-void CALLBACK ZN_GPUsetMode(unsigned long gdata)
+void  ZN_GPUsetMode(uint32_t  gdata)
 {
  GPUsetMode(gdata);
 }
 
 // --------------------------------------------------- // 
 
-long CALLBACK ZN_GPUgetMode(void)
+int32_t  ZN_GPUgetMode(void)
 {
  return GPUgetMode();
 }
 
 // --------------------------------------------------- // 
 
-long CALLBACK ZN_GPUdmaSliceIn(unsigned long *baseAddrL, unsigned long addr, unsigned long iSize)
+int32_t  ZN_GPUdmaSliceIn(uint32_t  *baseAddrL, uint32_t  addr, uint32_t  iSize)
 {
  GPUwriteDataMem(baseAddrL+addr,iSize);
  return 0;
 }
 // --------------------------------------------------- // 
 
-void CALLBACK ZN_GPUwriteData(unsigned long gdata)
+void  ZN_GPUwriteData(uint32_t  gdata)
 {
  GPUwriteDataMem(&gdata,1);
 }
 
 // --------------------------------------------------- // 
 
-long CALLBACK ZN_GPUdmaChain(unsigned long * baseAddrL, unsigned long addr)
+int32_t  ZN_GPUdmaChain(uint32_t  * baseAddrL, uint32_t  addr)
 {
  return GPUdmaChain(baseAddrL,addr);
 }
 
 // --------------------------------------------------- // 
 
-long CALLBACK ZN_GPUtest(void)
+int32_t  ZN_GPUtest(void)
 {
  return GPUtest();
 }
 
 // --------------------------------------------------- // 
 
-long CALLBACK ZN_GPUfreeze(unsigned long ulGetFreezeData,void * pF)
+int32_t  ZN_GPUfreeze(uint32_t  ulGetFreezeData,void * pF)
 {
  return GPUfreeze(ulGetFreezeData,pF);
 }
 
 // --------------------------------------------------- // 
 
-void CALLBACK ZN_GPUgetScreenPic(unsigned char * pMem)
+void  ZN_GPUgetScreenPic(unsigned char * pMem)
 {
  GPUgetScreenPic(pMem);
 }
 
 // --------------------------------------------------- // 
 
-void CALLBACK ZN_GPUshowScreenPic(unsigned char * pMem)
+void  ZN_GPUshowScreenPic(unsigned char * pMem)
 {
  GPUshowScreenPic(pMem);
 }
@@ -270,7 +275,7 @@ void CALLBACK ZN_GPUshowScreenPic(unsigned char * pMem)
 
 #ifndef _WINDOWS
 
-void CALLBACK ZN_GPUkeypressed(int keycode)
+void  ZN_GPUkeypressed(int keycode)
 {
  GPUkeypressed(keycode);
 }

@@ -1,4 +1,5 @@
 
+#include <inttypes.h>   
 #include "DrawString.h"
 #include "DrawStringFont.h"
 
@@ -12,7 +13,7 @@ static void drawChar15(char *ptr, int lPitch, char c, int mw, int mh, int mode) 
 	int x, y, w, h;
 	int fx, fy;
 	unsigned short *optr;
-	char *fptr;
+	unsigned char *fptr;
 
 	if (mw > CHAR_W) w = CHAR_W; else w = mw;
 	if (mh > CHAR_H) h = CHAR_H; else h = mh;
@@ -35,7 +36,7 @@ static void drawChar16(char *ptr, int lPitch, char c, int mw, int mh, int mode) 
 	int x, y, w, h;
 	int fx, fy;
 	unsigned short *optr;
-	char *fptr;
+	unsigned char *fptr;
 
 	if (mw > CHAR_W) w = CHAR_W; else w = mw;
 	if (mh > CHAR_H) h = CHAR_H; else h = mh;
@@ -58,7 +59,7 @@ static void drawChar24(char *ptr, int lPitch, char c, int mw, int mh, int mode) 
 	int x, y, w, h;
 	int fx, fy;
 	unsigned char *optr;
-	char *fptr;
+	unsigned char *fptr;
 
 	if (mw > CHAR_W) w = CHAR_W; else w = mw;
 	if (mh > CHAR_H) h = CHAR_H; else h = mh;
@@ -82,8 +83,8 @@ static void drawChar24(char *ptr, int lPitch, char c, int mw, int mh, int mode) 
 static void drawChar32(char *ptr, int lPitch, char c, int mw, int mh, int mode) {
 	int x, y, w, h;
 	int fx, fy;
-	unsigned long *optr;
-	char *fptr;
+	uint32_t *optr;
+	unsigned char *fptr;
 
 	if (mw > CHAR_W) w = CHAR_W; else w = mw;
 	if (mh > CHAR_H) h = CHAR_H; else h = mh;
@@ -93,7 +94,7 @@ static void drawChar32(char *ptr, int lPitch, char c, int mw, int mh, int mode) 
 	fy = font_tc[c*4+1];
 
 	for (y=0; y<h; y++) {
-		optr = (unsigned long*)(ptr + y * lPitch);
+		optr = (uint32_t*)(ptr + y * lPitch);
 		fptr = font + (fy + y) * 256 + fx;
 		for (x=0; x<w; x++) {
 			if (fptr[x]) optr[x] = 0x00ff00;

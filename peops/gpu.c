@@ -112,14 +112,14 @@
 //*************************************************************************// 
 
 
-#include "stdafx.h"
+
+#include <inttypes.h>  
+#include <string.h> 
+#include <stdio.h>
+#include <stdlib.h>
 
 #ifdef _WINDOWS
 
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdarg.h>
-#include <string.h>
 #include "resource.h"
 
 #endif
@@ -167,24 +167,24 @@ signed   char  *psxVsb;
 unsigned short *psxVuw;
 unsigned short *psxVuw_eom;
 signed   short *psxVsw;
-unsigned long  *psxVul;
-signed   long  *psxVsl;
+uint32_t  *psxVul;
+int32_t  *psxVsl;
 
 ////////////////////////////////////////////////////////////////////////
 // GPU globals
 ////////////////////////////////////////////////////////////////////////
 
-static long       lGPUdataRet;
-long              lGPUstatusRet;
+static int32_t       lGPUdataRet;
+int32_t              lGPUstatusRet;
 char              szDispBuf[64];
 char              szMenuBuf[36];
 char              szDebugText[512];
-unsigned long     ulStatusControl[256];      
+uint32_t     ulStatusControl[256];      
 
-static unsigned   long gpuDataM[256];
+static uint32_t gpuDataM[256];
 static unsigned   char gpuCommand = 0;
-static long       gpuDataC = 0;
-static long       gpuDataP = 0;
+static int32_t       gpuDataC = 0;
+static int32_t       gpuDataP = 0;
 
 VRAMLoad_t        VRAMWrite;
 VRAMLoad_t        VRAMRead;
@@ -198,10 +198,10 @@ int               iWindowMode;
 short             sDispWidths[8] = {256,320,512,640,368,384,512,640};
 PSXDisplay_t      PSXDisplay;
 PSXDisplay_t      PreviousPSXDisplay;
-long              lSelectedSlot=0;
+int32_t              lSelectedSlot=0;
 BOOL              bChangeWinMode=FALSE;
 BOOL              bDoLazyUpdate=FALSE;
-unsigned long     lGPUInfoVals[16];
+uint32_t     lGPUInfoVals[16];
 int               iFakePrimBusy=0;
 int               iRumbleVal=0;
 int               iRumbleTime=0;
@@ -272,8 +272,8 @@ BOOL FreeKernel32(void)
 ////////////////////////////////////////////////////////////////////////
 
 /*
-unsigned long PCADDR;
-void CALLBACK GPUdebugSetPC(unsigned long addr)
+uint32_t PCADDR;
+void  GPUdebugSetPC(uint32_t addr)
 {
  PCADDR=addr;
 }
@@ -282,7 +282,7 @@ void CALLBACK GPUdebugSetPC(unsigned long addr)
 #include <time.h>
 time_t tStart;
 
-void CALLBACK GPUdisplayText(char * pText)             // some debug func
+void  GPUdisplayText(char * pText)             // some debug func
 {
  if(!pText) {szDebugText[0]=0;return;}
  if(strlen(pText)>511) return;
@@ -292,7 +292,7 @@ void CALLBACK GPUdisplayText(char * pText)             // some debug func
 
 ////////////////////////////////////////////////////////////////////////
 
-void CALLBACK GPUdisplayFlags(unsigned long dwFlags)   // some info func
+void  GPUdisplayFlags(uint32_t dwFlags)   // some info func
 {
  dwCoreFlags=dwFlags;
  BuildDispMenu(0);
@@ -302,17 +302,17 @@ void CALLBACK GPUdisplayFlags(unsigned long dwFlags)   // some info func
 // stuff to make this a true PDK module
 ////////////////////////////////////////////////////////////////////////
 
-char * CALLBACK PSEgetLibName(void)
+char *  PSEgetLibName(void)
 {
  return libraryName;
 }
 
-unsigned long CALLBACK PSEgetLibType(void)
+uint32_t  PSEgetLibType(void)
 {
  return  PSE_LT_GPU;
 }
 
-unsigned long CALLBACK PSEgetLibVersion(void)
+uint32_t  PSEgetLibVersion(void)
 {
  return version<<16|revision<<8|build;
 }
@@ -380,7 +380,7 @@ char * pGetConfigInfos(int iCfg)
  if(iUseScanLines==2) strcat(szTxt,"double blitting");
  strcat(szTxt,"\r\n");
  strcat(pB,szTxt);
- sprintf(szTxt,"- Game fixes: %s [%08lx]\r\n",szO[iUseFixes],dwCfgFixes);
+ sprintf(szTxt,"- Game fixes: %s [%08x]\r\n",szO[iUseFixes],dwCfgFixes);
  strcat(pB,szTxt);
  //----------------------------------------------------//
  return pB;
@@ -410,17 +410,17 @@ void DoTextSnapShot(int iNum)
 
 ////////////////////////////////////////////////////////////////////////
 
-void CALLBACK GPUmakeSnapshot(void)                    // snapshot of whole vram
+void  GPUmakeSnapshot(void)                    // snapshot of whole vram
 {
  FILE *bmpfile;
  char filename[256];     
  unsigned char header[0x36];
- long size,height;
+ int32_t size,height;
  unsigned char line[1024*3];
  short i,j;
  unsigned char empty[2]={0,0};
  unsigned short color;
- unsigned long snapshotnr = 0;
+ uint32_t snapshotnr = 0;
  
  height=iGPUHeight;
 
@@ -456,7 +456,7 @@ void CALLBACK GPUmakeSnapshot(void)                    // snapshot of whole vram
 #ifdef _WINDOWS
    sprintf(filename,"SNAP\\PEOPSSOFT%03d.bmp",snapshotnr);
 #else
-   sprintf(filename,"%s/peopssoft%03ld.bmp",getenv("HOME"),snapshotnr);
+   sprintf(filename,"%s/peopssoft%03d.bmp",getenv("HOME"),snapshotnr);
 #endif
 
    bmpfile=fopen(filename,"rb");
@@ -491,9 +491,9 @@ void CALLBACK GPUmakeSnapshot(void)                    // snapshot of whole vram
 // INIT, will be called after lib load... well, just do some var init...
 ////////////////////////////////////////////////////////////////////////
  
-long CALLBACK GPUinit()                                // GPU INIT
+int32_t  GPUinit()                                // GPU INIT
 {
- memset(ulStatusControl,0,256*sizeof(unsigned long));  // init save state scontrol field
+ memset(ulStatusControl,0,256*sizeof(uint32_t));  // init save state scontrol field
 
  szDebugText[0]=0;                                     // init debug text buffer
 
@@ -505,14 +505,14 @@ long CALLBACK GPUinit()                                // GPU INIT
 
  psxVsb=(signed char *)psxVub;                         // different ways of accessing PSX VRAM
  psxVsw=(signed short *)psxVub;
- psxVsl=(signed long *)psxVub;
+ psxVsl=(int32_t *)psxVub;
  psxVuw=(unsigned short *)psxVub;
- psxVul=(unsigned long *)psxVub;
+ psxVul=(uint32_t *)psxVub;
 
  psxVuw_eom=psxVuw+1024*iGPUHeight;                    // pre-calc of end of vram
                         
  memset(psxVSecure,0x00,(iGPUHeight*2)*1024 + (1024*1024));
- memset(lGPUInfoVals,0x00,16*sizeof(unsigned long));
+ memset(lGPUInfoVals,0x00,16*sizeof(uint32_t));
  
  SetFPSHandler();   
 
@@ -556,7 +556,7 @@ long CALLBACK GPUinit()                                // GPU INIT
 ////////////////////////////////////////////////////////////////////////
 
 #ifdef _WINDOWS
-long CALLBACK GPUopen(HWND hwndGPU)                    // GPU OPEN
+int32_t  GPUopen(HWND hwndGPU)                    // GPU OPEN
 {
  hWGPU = hwndGPU;                                      // store hwnd
 
@@ -583,9 +583,9 @@ long CALLBACK GPUopen(HWND hwndGPU)                    // GPU OPEN
 
 #else
 
-long GPUopen(unsigned long * disp,char * CapText,char * CfgFile)
+int32_t GPUopen(void** disp,char * CapText,char * CfgFile)
 {
- unsigned long d;
+ void* d;
 
  pCaptionText=CapText;
 
@@ -602,7 +602,7 @@ long GPUopen(unsigned long * disp,char * CapText,char * CfgFile)
 
  d=ulInitDisplay();                                    // setup x
 
- if(disp) *disp=d;                                     // wanna x pointer? ok
+ if(disp) *disp=(void*)d;                                     // wanna x pointer? ok
 
  if(d) return 0;
  return -1;
@@ -614,7 +614,7 @@ long GPUopen(unsigned long * disp,char * CapText,char * CfgFile)
 // time to leave...
 ////////////////////////////////////////////////////////////////////////
 
-long CALLBACK GPUclose()                               // GPU CLOSE
+int32_t  GPUclose()                               // GPU CLOSE
 {
 #ifdef _WINDOWS
  if(RECORD_RECORDING==TRUE) {RECORD_Stop();RECORD_RECORDING=FALSE;BuildDispMenu(0);}
@@ -636,7 +636,7 @@ long CALLBACK GPUclose()                               // GPU CLOSE
 // I shot the sheriff
 ////////////////////////////////////////////////////////////////////////
 
-long CALLBACK GPUshutdown()                            // GPU SHUTDOWN
+int32_t  GPUshutdown()                            // GPU SHUTDOWN
 {
  // screensaver: release the handle for kernel32.dll
  FreeKernel32();
@@ -706,13 +706,13 @@ void updateDisplay(void)                               // UPDATE DISPLAY
 
 void ChangeDispOffsetsX(void)                          // X CENTER
 {
- long lx,l;
+ int32_t lx,l;
 
  if(!PSXDisplay.Range.x1) return;
 
  l=PreviousPSXDisplay.DisplayMode.x;
 
- l*=(long)PSXDisplay.Range.x1;
+ l*=(int32_t)PSXDisplay.Range.x1;
  l/=2560;lx=l;l&=0xfffffff8;
 
  if(l==PreviousPSXDisplay.Range.y1) return;            // abusing range.y1 for
@@ -875,7 +875,7 @@ void ChangeWindowMode(void)                            // TOGGLE FULLSCREEN - WI
 // gun cursor func: player=0-7, x=0-511, y=0-255
 ////////////////////////////////////////////////////////////////////////
 
-void CALLBACK GPUcursor(int iPlayer,int x,int y)
+void  GPUcursor(int iPlayer,int x,int y)
 {
  if(iPlayer<0) return;
  if(iPlayer>7) return;
@@ -895,7 +895,7 @@ void CALLBACK GPUcursor(int iPlayer,int x,int y)
 // update lace is called evry VSync
 ////////////////////////////////////////////////////////////////////////
 
-void CALLBACK GPUupdateLace(void)                      // VSYNC
+void  GPUupdateLace(void)                      // VSYNC
 {
  if(!(dwActFixes&1))
   lGPUstatusRet^=0x80000000;                           // odd/even bit
@@ -942,7 +942,7 @@ if(RECORD_RECORDING)
 // process read request from GPU status register
 ////////////////////////////////////////////////////////////////////////
 
-unsigned long CALLBACK GPUreadStatus(void)             // READ STATUS
+uint32_t  GPUreadStatus(void)             // READ STATUS
 {
  if(dwActFixes&1)
   {
@@ -981,9 +981,9 @@ unsigned long CALLBACK GPUreadStatus(void)             // READ STATUS
 // these are always single packet commands.
 ////////////////////////////////////////////////////////////////////////
 
-void CALLBACK GPUwriteStatus(unsigned long gdata)      // WRITE STATUS
+void  GPUwriteStatus(uint32_t gdata)      // WRITE STATUS
 {
- unsigned long lCommand=(gdata>>24)&0xff;
+ uint32_t lCommand=(gdata>>24)&0xff;
 
  ulStatusControl[lCommand]=gdata;                      // store command for freezing
 
@@ -992,7 +992,7 @@ void CALLBACK GPUwriteStatus(unsigned long gdata)      // WRITE STATUS
    //--------------------------------------------------//
    // reset gpu
    case 0x00:
-    memset(lGPUInfoVals,0x00,16*sizeof(unsigned long));
+    memset(lGPUInfoVals,0x00,16*sizeof(uint32_t));
     lGPUstatusRet=0x14802000;
     PSXDisplay.Disabled=1;
     DataWriteMode=DataReadMode=DR_NORMAL;
@@ -1223,7 +1223,7 @@ void CALLBACK GPUwriteStatus(unsigned long gdata)      // WRITE STATUS
 // vram read/write helpers, needed by LEWPY's optimized vram read/write :)
 ////////////////////////////////////////////////////////////////////////
 
-__inline void FinishedVRAMWrite(void)
+void FinishedVRAMWrite(void)
 {
 /*
 // NEWX
@@ -1250,7 +1250,7 @@ __inline void FinishedVRAMWrite(void)
  VRAMWrite.RowsRemaining = 0;
 }
 
-__inline void FinishedVRAMRead(void)
+void FinishedVRAMRead(void)
 {
  // Set register to NORMAL operation
  DataReadMode = DR_NORMAL;
@@ -1270,7 +1270,7 @@ __inline void FinishedVRAMRead(void)
 // core read from vram
 ////////////////////////////////////////////////////////////////////////
 
-void CALLBACK GPUreadDataMem(unsigned long * pMem, int iSize)
+void  GPUreadDataMem(uint32_t * pMem, int iSize)
 {
  int i;
 
@@ -1290,7 +1290,7 @@ void CALLBACK GPUreadDataMem(unsigned long * pMem, int iSize)
    if ((VRAMRead.ColsRemaining > 0) && (VRAMRead.RowsRemaining > 0))
     {
      // lower 16 bit
-     lGPUdataRet=(unsigned long)*VRAMRead.ImagePtr;
+     lGPUdataRet=(uint32_t)*VRAMRead.ImagePtr;
 
      VRAMRead.ImagePtr++;
      if(VRAMRead.ImagePtr>=psxVuw_eom) VRAMRead.ImagePtr-=iGPUHeight*1024;
@@ -1305,7 +1305,7 @@ void CALLBACK GPUreadDataMem(unsigned long * pMem, int iSize)
       }
 
      // higher 16 bit (always, even if it's an odd width)
-     lGPUdataRet|=(unsigned long)(*VRAMRead.ImagePtr)<<16;
+     lGPUdataRet|=(uint32_t)(*VRAMRead.ImagePtr)<<16;
 
      *pMem++=lGPUdataRet;
 
@@ -1335,9 +1335,9 @@ ENDREAD:
 
 ////////////////////////////////////////////////////////////////////////
 
-unsigned long CALLBACK GPUreadData(void)
+uint32_t  GPUreadData(void)
 {
- unsigned long l;
+ uint32_t l;
  GPUreadDataMem(&l,1);
  return lGPUdataRet;
 }
@@ -1417,10 +1417,10 @@ const unsigned char primTableCX[256] =
     0,0,0,0,0,0,0,0
 };
 
-void CALLBACK GPUwriteDataMem(unsigned long * pMem, int iSize)
+void  GPUwriteDataMem(uint32_t * pMem, int iSize)
 {
  unsigned char command;
- unsigned long gdata=0;
+ uint32_t gdata=0;
  int i=0;
 
  GPUIsBusy;
@@ -1457,7 +1457,7 @@ STARTVRAM:
          VRAMWrite.ColsRemaining--;
          if (VRAMWrite.ColsRemaining <= 0)             // last pixel is odd width
           {
-           gdata=(gdata&0xFFFF)|(((unsigned long)(*VRAMWrite.ImagePtr))<<16);
+           gdata=(gdata&0xFFFF)|(((uint32_t)(*VRAMWrite.ImagePtr))<<16);
            FinishedVRAMWrite();
            bDoVSyncUpdate=TRUE;
            goto ENDVRAM;
@@ -1544,7 +1544,7 @@ ENDVRAM:
 
 ////////////////////////////////////////////////////////////////////////
 
-void CALLBACK GPUwriteData(unsigned long gdata)
+void  GPUwriteData(uint32_t gdata)
 {
  GPUwriteDataMem(&gdata,1);
 }
@@ -1553,16 +1553,16 @@ void CALLBACK GPUwriteData(unsigned long gdata)
 // this functions will be removed soon (or 'soonish')... not really needed, but some emus want them
 ////////////////////////////////////////////////////////////////////////
 
-void CALLBACK GPUsetMode(unsigned long gdata)
+void  GPUsetMode(uint32_t gdata)
 {
 // Peops does nothing here...
 // DataWriteMode=(gdata&1)?DR_VRAMTRANSFER:DR_NORMAL;
 // DataReadMode =(gdata&2)?DR_VRAMTRANSFER:DR_NORMAL;
 }
 
-long CALLBACK GPUgetMode(void)
+int32_t  GPUgetMode(void)
 {
- long iT=0;
+ int32_t iT=0;
 
  if(DataWriteMode==DR_VRAMTRANSFER) iT|=0x1;
  if(DataReadMode ==DR_VRAMTRANSFER) iT|=0x2;
@@ -1573,7 +1573,7 @@ long CALLBACK GPUgetMode(void)
 // call config dlg
 ////////////////////////////////////////////////////////////////////////
 
-long CALLBACK GPUconfigure(void)
+int32_t  GPUconfigure(void)
 {
 #ifdef _WINDOWS
  HWND hWP=GetActiveWindow();
@@ -1612,9 +1612,9 @@ void SetFixes(void)
 // process gpu commands
 ////////////////////////////////////////////////////////////////////////
 
-unsigned long lUsedAddr[3];
+uint32_t lUsedAddr[3];
 
-__inline BOOL CheckForEndlessLoop(unsigned long laddr)
+BOOL CheckForEndlessLoop(uint32_t laddr)
 {
  if(laddr==lUsedAddr[1]) return TRUE;
  if(laddr==lUsedAddr[2]) return TRUE;
@@ -1625,9 +1625,9 @@ __inline BOOL CheckForEndlessLoop(unsigned long laddr)
  return FALSE;
 }
 
-long CALLBACK GPUdmaChain(unsigned long * baseAddrL, unsigned long addr)
+int32_t  GPUdmaChain(uint32_t * baseAddrL, uint32_t addr)
 {
- unsigned long dmaMem;
+ uint32_t dmaMem;
  unsigned char * baseAddrB;
  short count;unsigned int DMACommandCounter = 0;
 
@@ -1663,7 +1663,7 @@ long CALLBACK GPUdmaChain(unsigned long * baseAddrL, unsigned long addr)
 ////////////////////////////////////////////////////////////////////////
 
 #ifdef _WINDOWS
-BOOL CALLBACK AboutDlgProc(HWND hW, UINT uMsg, WPARAM wParam, LPARAM lParam)
+BOOL  AboutDlgProc(HWND hW, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
  switch(uMsg)
   {
@@ -1677,7 +1677,7 @@ BOOL CALLBACK AboutDlgProc(HWND hW, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 #endif
 
-void CALLBACK GPUabout(void)                           // ABOUT
+void  GPUabout(void)                           // ABOUT
 {
 #ifdef _WINDOWS
  HWND hWP=GetActiveWindow();                           // to be sure
@@ -1695,7 +1695,7 @@ void CALLBACK GPUabout(void)                           // ABOUT
 // We are ever fine ;)
 ////////////////////////////////////////////////////////////////////////
 
-long CALLBACK GPUtest(void)
+int32_t  GPUtest(void)
 {
  // if test fails this function should return negative value for error (unable to continue)
  // and positive value for warning (can continue but output might be crappy)
@@ -1708,20 +1708,20 @@ long CALLBACK GPUtest(void)
 
 typedef struct GPUFREEZETAG
 {
- unsigned long ulFreezeVersion;      // should be always 1 for now (set by main emu)
- unsigned long ulStatus;             // current gpu status
- unsigned long ulControl[256];       // latest control register values
+ uint32_t ulFreezeVersion;      // should be always 1 for now (set by main emu)
+ uint32_t ulStatus;             // current gpu status
+ uint32_t ulControl[256];       // latest control register values
  unsigned char psxVRam[1024*1024*2]; // current VRam image (full 2 MB for ZN)
 } GPUFreeze_t;
 
 ////////////////////////////////////////////////////////////////////////
 
-long CALLBACK GPUfreeze(unsigned long ulGetFreezeData,GPUFreeze_t * pF)
+int32_t  GPUfreeze(uint32_t ulGetFreezeData,GPUFreeze_t * pF)
 {
  //----------------------------------------------------//
  if(ulGetFreezeData==2)                                // 2: info, which save slot is selected? (just for display)
   {
-   long lSlotNum=*((long *)pF);
+   int32_t lSlotNum=*((int32_t *)pF);
    if(lSlotNum<0) return 0;
    if(lSlotNum>8) return 0;
    lSelectedSlot=lSlotNum+1;
@@ -1735,7 +1735,7 @@ long CALLBACK GPUfreeze(unsigned long ulGetFreezeData,GPUFreeze_t * pF)
  if(ulGetFreezeData==1)                                // 1: get data
   {
    pF->ulStatus=lGPUstatusRet;
-   memcpy(pF->ulControl,ulStatusControl,256*sizeof(unsigned long));
+   memcpy(pF->ulControl,ulStatusControl,256*sizeof(uint32_t));
    memcpy(pF->psxVRam,  psxVub,         1024*iGPUHeight*2);
 
    return 1;
@@ -1744,7 +1744,7 @@ long CALLBACK GPUfreeze(unsigned long ulGetFreezeData,GPUFreeze_t * pF)
  if(ulGetFreezeData!=0) return 0;                      // 0: set data
 
  lGPUstatusRet=pF->ulStatus;
- memcpy(ulStatusControl,pF->ulControl,256*sizeof(unsigned long));
+ memcpy(ulStatusControl,pF->ulControl,256*sizeof(uint32_t));
  memcpy(psxVub,         pF->psxVRam,  1024*iGPUHeight*2);
 
 // RESET TEXTURE STORE HERE, IF YOU USE SOMETHING LIKE THAT
@@ -2024,7 +2024,7 @@ void PaintPicDot(unsigned char * p,unsigned char c)
 // rendered picture
 
 #ifdef _WINDOWS
-void CALLBACK GPUgetScreenPic(unsigned char * pMem)    
+void  GPUgetScreenPic(unsigned char * pMem)    
 {
  HRESULT ddrval;DDSURFACEDESC xddsd;unsigned char * pf;
  int x,y,c,v,iCol;RECT r,rt;
@@ -2132,12 +2132,12 @@ void CALLBACK GPUgetScreenPic(unsigned char * pMem)
     }
    else       
     {
-     unsigned long sx;
+     uint32_t sx;
      for(y=0;y<96;y++)
       {
        for(x=0;x<128;x++)
         {
-         sx=*((unsigned long *)((ps)+
+         sx=*((uint32_t *)((ps)+
               r.top*xddsd.lPitch+
               (((int)((float)y*YS))*xddsd.lPitch)+
                r.left*4+
@@ -2230,12 +2230,12 @@ void CALLBACK GPUgetScreenPic(unsigned char * pMem)
     }
    else       
     {
-     unsigned long sx;
+     uint32_t sx;
      for(y=0;y<96;y++)
       {
        for(x=0;x<128;x++)
         {
-         sx=*((unsigned long *)((ps)+
+         sx=*((uint32_t *)((ps)+
               r.top*xddsd.lPitch+
               (((int)((float)y*YS))*xddsd.lPitch)+
                r.left*4+
@@ -2317,7 +2317,7 @@ void GPUgetScreenPic(unsigned char * pMem)
 
    if(iDesktopCol==16)
     {
-     long lPitch=iResX<<1;
+     int32_t lPitch=iResX<<1;
      unsigned short sx;
 #ifdef USE_DGA2
      if (!iWindowMode) lPitch+= (dgaDev->mode.imageWidth - dgaDev->mode.viewportWidth) * 2;
@@ -2339,7 +2339,7 @@ void GPUgetScreenPic(unsigned char * pMem)
    else
    if(iDesktopCol==15)
     {
-     long lPitch=iResX<<1;
+     int32_t lPitch=iResX<<1;
      unsigned short sx;
 #ifdef USE_DGA2
      if (!iWindowMode) lPitch+= (dgaDev->mode.imageWidth - dgaDev->mode.viewportWidth) * 2;
@@ -2360,8 +2360,8 @@ void GPUgetScreenPic(unsigned char * pMem)
     }
    else
     {
-     long lPitch=iResX<<2;
-     unsigned long sx;
+     int32_t lPitch=iResX<<2;
+     uint32_t sx;
 #ifdef USE_DGA2
      if (!iWindowMode) lPitch+= (dgaDev->mode.imageWidth - dgaDev->mode.viewportWidth) * 4;
 #endif
@@ -2369,7 +2369,7 @@ void GPUgetScreenPic(unsigned char * pMem)
       {
        for(x=0;x<128;x++)
         {
-         sx=*((unsigned long *)((ps)+
+         sx=*((uint32_t *)((ps)+
               (((int)((float)y*YS))*lPitch)+
                ((int)((float)x*XS))*4));
          *(pf+0)=(sx&0xff);
@@ -2425,7 +2425,7 @@ void GPUgetScreenPic(unsigned char * pMem)
 // release your picture data and stop displaying
 // the screen pic
 
-void CALLBACK GPUshowScreenPic(unsigned char * pMem)
+void  GPUshowScreenPic(unsigned char * pMem)
 {
  DestroyPic();                                         // destroy old pic data
  if(pMem==0) return;                                   // done
@@ -2434,14 +2434,14 @@ void CALLBACK GPUshowScreenPic(unsigned char * pMem)
 
 ////////////////////////////////////////////////////////////////////////
 
-void CALLBACK GPUsetfix(unsigned long dwFixBits)
+void  GPUsetfix(uint32_t dwFixBits)
 {
  dwEmuFixes=dwFixBits;
 }
 
 ////////////////////////////////////////////////////////////////////////
 
-void CALLBACK GPUsetframelimit(unsigned long option)
+void  GPUsetframelimit(uint32_t option)
 {
  bInitCap = TRUE;
 
@@ -2461,7 +2461,7 @@ void CALLBACK GPUsetframelimit(unsigned long option)
 
 #ifdef _WINDOWS
 
-void CALLBACK GPUvisualVibration(unsigned long iSmall, unsigned long iBig)
+void  GPUvisualVibration(uint32_t iSmall, uint32_t iBig)
 {
  int iVibVal;
 

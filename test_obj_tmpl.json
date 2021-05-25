@@ -1,0 +1,6 @@
+{
+    "source": "test_obj.dae",
+    "textures": [
+        "pants.png": { "x": 0, "y": 256 }
+    ]
+}

@@ -16,12 +16,12 @@ void ZList_clear() {
 	ZList_init();
 }
 
-int ZList_add(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c) {
+int ZList_add(ScreenPoint *p1, ScreenPoint *p2, ScreenPoint *p3, color24 c, Texture tex) {
 	
 	ScreenTriangle *new_screen_triangle, *current_screen_triangle;
 	int i;
 	
-	if(!(new_screen_triangle = ScreenTriangle_new(p1, p2, p3, c)))
+	if(!(new_screen_triangle = ScreenTriangle_new(p1, p2, p3, c, tex)))
 	    return 0;
 	
 	
@@ -56,15 +56,20 @@ void ZList_render() {
 	ScreenTriangle *screen_triangle;
 	
 	List_for_each(zlist, screen_triangle, ScreenTriangle*)
-	    S_draw_tri(
+	    S_draw_tri_textured(
 			screen_triangle->points[0].x,
 			screen_triangle->points[0].y,
 			screen_triangle->points[1].x,
 			screen_triangle->points[1].y, 
 			screen_triangle->points[2].x,
-			screen_triangle->points[2].y, 
-			RGB24_RED(screen_triangle->c),
-			RGB24_GRN(screen_triangle->c),
-			RGB24_BLU(screen_triangle->c)
+			screen_triangle->points[2].y,
+			screen_triangle->tex,			
+			screen_triangle->c,
+			screen_triangle->points[0].u,
+			screen_triangle->points[0].v,
+			screen_triangle->points[1].u,
+			screen_triangle->points[1].v,
+			screen_triangle->points[2].u,
+			screen_triangle->points[2].v
 		);
 }

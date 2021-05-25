@@ -30,7 +30,7 @@
 void          DoBufferSwap(void);
 void          DoClearScreenBuffer(void);
 void          DoClearFrontBuffer(void);
-unsigned long ulInitDisplay(void);
+void* ulInitDisplay(void);
 void          CloseDisplay(void);
 void          CreatePic(unsigned char * pMem);
 void          DestroyPic(void);

@@ -4,6 +4,7 @@
 #include "list.h"
 #include "mathhelpers.h"
 #include "color.h"
+#include "renderer.h"
 #include <math.h>
 #include <stdlib.h>
 
@@ -13,11 +14,11 @@ void Object_delete(Object *object) {
     free((void*)object);
 }
 
-int Object_add_triangle(Object* object, Vertex *v1, Vertex *v2, Vertex *v3, color24 c) {
+int Object_add_triangle(Object* object, Vertex *v1, Vertex *v2, Vertex *v3, color24 c, Texture tex) {
 	
 	Triangle* triangle;
 	
-	if(!(triangle = Triangle_new(v1, v2, v3, c)))
+	if(!(triangle = Triangle_new(v1, v2, v3, c, tex)))
 	    return 0;
     
 	if(!List_add(object->triangles, (void*)triangle)) {
@@ -25,6 +26,8 @@ int Object_add_triangle(Object* object, Vertex *v1, Vertex *v2, Vertex *v3, colo
 		Triangle_delete(triangle);
 		return 0;
 	}
+
+    return 1;
 }
 
 Object *Object_new() {
@@ -42,6 +45,34 @@ Object *Object_new() {
 	
     object->x = object->y = object->z = 0.0;
     
+    return object;
+}
+
+Object* Object_from_triangles(TriangleList* triangle_list) {
+
+    Object* object = Object_new();
+
+    if(!object) return object;
+
+    Texture tex = S_load_texture(
+        (uint32_t*)triangle_list->pixdata,
+        0, 256,
+        triangle_list->img_h,
+        triangle_list->img_w
+    );
+ 
+    for(int i = 0; i < triangle_list->count; i++) {
+
+        triangle_list->triangles[i].tex = tex;
+
+        if(!List_add(object->triangles, (void*)&(triangle_list->triangles[i]))) {
+
+            Object_delete(object);
+            
+            return (Object*)0;
+        }
+    }
+
     return object;
 }
 
@@ -162,4 +193,19 @@ void Object_rot_z_local(Object* object, float angle) {
     Object_translate(object, -oldx, -oldy, -oldz);
     Object_rot_z_global(object, angle);
     Object_translate(object, oldx, oldy, oldz);
+}
+
+void Object_scale_x(Object* object, float scale) {
+
+    Triangle *triangle;
+    int j;
+    float temp_x;
+        
+    List_for_each(object->triangles, triangle, Triangle*) {
+         
+        for(j = 0; j < 3; j++) {
+            
+            triangle->v[j].x *= scale;
+        }
+    }
 }
