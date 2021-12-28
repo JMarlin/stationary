@@ -4,6 +4,9 @@
 
 EventDispatchProcedure g_event_proc = 0;
 
+int last_mouse_x = 0;
+int last_mouse_y = 0;
+
 void WS_InitEvents() {
 
     #warning Not Implemented: WS_InitEvents
@@ -14,6 +17,18 @@ RenderProcedure g_render_proc = 0;
 void do_render_loop_proc() {
 
     g_render_proc();
+}
+
+void do_event_proc(int x, int y) {
+	last_mouse_x = x;
+	last_mouse_y = y;
+	
+	g_event_proc();
+}
+
+void WS_GetMouse(int* x, int* y) {
+	*x = last_mouse_x;
+	*y = last_mouse_y;
 }
 
 void WS_SetRenderLoopProc(RenderProcedure render_proc) {
@@ -45,6 +60,10 @@ void WS_StartRenderLoop() {
 void WS_StartEventDispatch(EventDispatchProcedure dispatch_proc) {
 
     g_event_proc = dispatch_proc;
+
+    EM_ASM_(
+        Module.do_event_proc = Module.cwrap('do_event_proc', null, ['number', 'number']);
+    );
 
     //TODO: Dispatch browser events to the dispatch_proc
     //      shutdown application if dispatch_proc returns 1
@@ -118,6 +137,15 @@ WS_Display* WS_CreateDisplay(uint32_t w, uint32_t h) {
         };
 
         window.addEventListener('resize', resizer);
+	new_canvas.addEventListener('mousemove', e => {
+		const scale = 320 / parseInt(new_canvas.style.width);
+		const new_coords = {
+		    x: e.offsetX * scale,
+		    y: e.offsetY * scale
+		};
+		
+		Module.do_event_proc(new_coords.x, new_coords.y);
+	});
 
         new_canvas.style.cursor = 'none';
         new_canvas.style.position = 'absolute';

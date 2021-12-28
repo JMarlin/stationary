@@ -170,15 +170,130 @@ int ProcessEvents() {
     return done;
 #else
     #warning Not Implemented: web version of event handling
+
+    WS_GetMouse(&mouse_x, &mouse_y);
+
     return 0;
 #endif
 }
 
+#define OP_PLACE_CAM 1
+#define OP_MOVE_CAM 2
+
+typedef struct Vec3_S {
+    float x;
+    float y;
+    float z;
+} Vec3;
+
+typedef struct Instruction_S {
+    int operation;
+    int frames;
+    int wait;
+    Vec3 operand;
+} Instruction;
+
+Instruction testInstructions[] = {
+    {
+        OP_PLACE_CAM,
+	0,
+	0,
+	{ 0, 0, -20 }
+    },
+    {
+        OP_MOVE_CAM,
+	200,
+	0,
+	{ 0, 0, 0 }
+    },
+    {
+	OP_MOVE_CAM,
+	350,
+	0,
+	{ 0, 0, -20 }
+    },
+    {
+	OP_MOVE_CAM,
+	100,
+	0,
+	{ 5, 0, 0 }
+    },
+    {
+	OP_MOVE_CAM,
+	200,
+	0,
+	{ -5, 0, 0 }
+    },
+    {
+	OP_MOVE_CAM,
+	100,
+	0,
+	{ 0, 0, 0 }
+    },
+    {
+	OP_MOVE_CAM,
+	50,
+	0,
+	{ 0, 0, -20 }
+    },
+    {0}
+};
+
+void ProcessAnimation(Instruction* instructions) {
+	static int position = -1;
+	static int frames_remaining = 0;
+	static Vec3 delta = { 0.0, 0.0, 0.0 };
+	static Vec3 current = { 0.0, 0.0, 0.0 };
+
+	int frame_ready = 0;
+
+	while(!frame_ready) {
+
+		if(!frames_remaining)
+		{
+			position++;
+
+			if(!instructions[position].operation)
+				position = 0;
+
+			if(instructions[position].operation == OP_PLACE_CAM) {
+				delta.x = instructions[position].operand.x - current.x;
+				delta.y = instructions[position].operand.y - current.y;
+				delta.z = instructions[position].operand.z - current.z;
+
+				frames_remaining = 1;
+			}
+				
+			if(instructions[position].operation == OP_MOVE_CAM) {
+				delta.x = (instructions[position].operand.x - current.x) / instructions[position].frames;
+				delta.y = (instructions[position].operand.y - current.y) / instructions[position].frames;
+				delta.z = (instructions[position].operand.z - current.z) / instructions[position].frames;
+
+				frames_remaining = instructions[position].frames;
+				frame_ready = 1;
+			}
+
+			printf("next delta: {%f, %f, %f}\n", delta.x, delta.y, delta.z);
+		} else {
+			frame_ready = 1;
+		}
+
+		current.x += delta.x;
+		current.y += delta.y;
+		current.z += delta.z;
+		Object_translate(mesh1, -delta.x, -delta.y, -delta.z);
+		Object_rot_y_local(mesh1, 0.6);
+		frames_remaining--;
+	}
+}
+
 void RenderScene() {
 
-    Object_rot_y_local(mesh1, 0.5);
+    //Object_rot_y_local(mesh1, 0.5);
     //Object_rot_z_local(mesh1, 0.7);        
     //Object_rot_x_local(mesh1, 0.9);
+
+    ProcessAnimation(testInstructions);
     
     S_fill_background(0, 0x30, 0xF0);
     

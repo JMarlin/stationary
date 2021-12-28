@@ -1,31 +1,35 @@
-
 rem -------------------------------------------------------------------------#
 rem  STATIONARY COMPONENTS                                                   #
 rem -------------------------------------------------------------------------#
-cl /c /out:stationary_test_main.obj stationary_test_main.c
+call emcc -c -o stationary_test_main.bc stationary_test_main.c -g
+call emcc -c -o list.bc list.c -g
+call emcc -c -o vertex.bc vertex.c -g
+call emcc -c -o triangle.bc triangle.c -g
+call emcc -c -o object.bc object.c -g
+call emcc -c -o cube.bc cube.c -g
+call emcc -c -o screentriangle.bc screentriangle.c -g 
+call emcc -c -o zlist.bc zlist.c -g
+call emcc -c -o renderer.bc renderer.c -g
 
 rem -------------------------------------------------------------------------#
 rem  PEOPS COMPONENTS                                                        #
 rem -------------------------------------------------------------------------#
-cl /c /out:conf.obj peops\conf.c /D_WINDOWS
-cl /c /out:cfg.obj peops\cfg.c /D_WINDOWS
-cl /c /out:draw.obj peops\draw.c /D_WINDOWS
-cl /c /out:DrawString.obj peops\DrawString.c /D_WINDOWS 
-cl /c /out:fps.obj peops\fps.c /D_WINDOWS
-cl /c /out:gpu.obj peops\gpu.c /D_WINDOWS
-nasm /out:hq2x16.obj -fwin32 peops\hq2x16.asm -I .\peops\ -w-all
-nasm /out:hq2x32.obj -fwin32 peops\hq2x32.asm -I .\peops\ -w-all
-nasm /out:hq3x16.obj -fwin32 peops\hq3x16.asm -I .\peops\ -w-all
-nasm /out:hq3x32.obj -fwin32 peops\hq3x32.asm -I .\peops\ -w-all
-nasm /out:i386.obj -fwin32 peops\i386.asm -I .\peops\ -w-all
-cl /c /out:key.obj peops\key.c /D_WINDOWS
-cl /c /out:menu.obj peops\menu.c /D_WINDOWS
-cl /c /out:prim.obj peops\prim.c /D_WINDOWS
-cl /c /out:record.obj peops\record.c /D_WINDOWS
-cl /c /out:soft.obj peops\soft.c /D_WINDOWS
-cl /c /out:zn.obj peops\zn.c /D_WINDOWS
+call emcc -c -o cfg.bc peops/cfg.c -g
+call emcc -c -o draw.bc peops/draw.c -g
+call emcc -c -o DrawString.bc peops/DrawString.c -g 
+call emcc -c -o fps.bc peops/fps.c -g
+call emcc -c -o gpu.bc peops/gpu.c -g
+call emcc -c -o key.bc peops/key.c -g
+call emcc -c -o menu.bc peops/menu.c -g
+call emcc -c -o prim.bc peops/prim.c -g
+call emcc -c -o soft.bc peops/soft.c -g
+
+rem -------------------------------------------------------------------------#
+rem  EMSCRIPTEN SHIM                                                         #
+rem -------------------------------------------------------------------------#
+call emcc -c -o webshim.bc webshim.c -g
 
 rem -------------------------------------------------------------------------#
 rem  LINK                                                                    #
 rem -------------------------------------------------------------------------#
-link32 /out:stationary_test.exe *.obj ddraw.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /machine:I386
+call emcc -o stationary_test.js cfg.bc cube.bc draw.bc DrawString.bc fps.bc gpu.bc key.bc list.bc menu.bc object.bc prim.bc renderer.bc screentriangle.bc soft.bc stationary_test_main.bc triangle.bc vertex.bc webshim.bc zlist.bc zn.bc -lm -g -s NO_EXIT_RUNTIME=1 -s EXPORTED_FUNCTIONS=["_do_render_loop_proc","_do_event_proc","_main"] -s LEGACY_VM_SUPPORT=1 -s EXTRA_EXPORTED_RUNTIME_METHODS=["ccall","cwrap"]
