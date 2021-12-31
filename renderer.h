@@ -43,6 +43,7 @@ typedef struct uv_point {
 
 void S_set_fov_angle(int angle);
 int S_do_gpu_startup();
+void S_draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t r, uint8_t g, uint8_t b);
 void S_draw_tri(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t x2, uint16_t y2, uint8_t r, uint8_t g, uint8_t b);
 Texture S_load_texture(uint32_t* src, uint16_t x, uint16_t y, uint8_t w, uint8_t h);
 void S_upload_image_data(uint32_t* src, uint16_t x, uint16_t y, uint16_t h, uint16_t w);

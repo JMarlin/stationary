@@ -24,6 +24,7 @@ Object *cube1, *cube2, *mesh1;
 Texture tex;
 int mouse_x = 0;
 int mouse_y = 0;
+int buttons = 0;
 
 int main(int argc, char* argv[]) {
 
@@ -143,6 +144,26 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
+void ClampMouse() {
+
+	mouse_x = mouse_x < 0 ? 0 : mouse_x > 319 ? 319 : mouse_x;
+	mouse_y = mouse_y < 0 ? 0 : mouse_y > 239 ? 239 : mouse_y;
+}
+
+int line[2][2] = { { 0, 0 }, { 0, 0 } };
+int clickState = 0;
+
+int HandleMouseClick() {
+
+	line[clickState][0] = mouse_x;
+	line[clickState][1] = mouse_y;
+
+	clickState++;
+
+	if(clickState == 2)
+		clickState == 0;
+}
+
 int ProcessEvents() {
 
 #ifdef NATIVE_VERSION
@@ -164,6 +185,8 @@ int ProcessEvents() {
 
             mouse_x = mouse_evt->x >> 1;
             mouse_y = mouse_evt->y >> 1;
+
+	    ClampMouse();
         }
     }
 
@@ -171,7 +194,13 @@ int ProcessEvents() {
 #else
     #warning Not Implemented: web version of event handling
 
-    WS_GetMouse(&mouse_x, &mouse_y);
+    int old_buttons = buttons;
+
+    WS_GetMouse(&mouse_x, &mouse_y, &buttons);
+    ClampMouse();
+
+    if(old_buttons == 1 && buttons == 0)
+	    HandleMouseClick();
 
     return 0;
 #endif
@@ -283,6 +312,7 @@ void ProcessAnimation(Instruction* instructions) {
 		current.z += delta.z;
 		Object_translate(mesh1, -delta.x, -delta.y, -delta.z);
 		Object_rot_y_local(mesh1, 0.6);
+		Object_rot_x_local(mesh1, 0.4);
 		frames_remaining--;
 	}
 }
@@ -301,23 +331,14 @@ void RenderScene() {
 
     S_commit_scene();
 
-    //Render UI elements
-    int mouse_clamp_x = 
-        mouse_x < 0 ? 0 :
-        mouse_x > 319 ? 319 :
-        mouse_x;
-
-    int mouse_clamp_y =
-        mouse_y < 0 ? 0 :
-        mouse_y > 239 ? 239 :
-        mouse_y;
-
     S_draw_tri(
-            mouse_clamp_x, mouse_clamp_y,
-            mouse_clamp_x + 12, mouse_clamp_y + 4,
-            mouse_clamp_x + 4, mouse_clamp_y + 12,
+            mouse_x, mouse_y,
+            mouse_x + 12, mouse_y + 4,
+            mouse_x + 4, mouse_y + 12,
             128, 128, 128
     );
+
+    S_draw_line(clickState == 0 ? line[0][0] : mouse_x, clickState == 0 ? line[0][1] : mouse_y, clickState == 1 ? mouse_x : line[1][0], clickState == 1 ? mouse_y : line[1][1], 0, 0, 0);
 
     updateDisplay();
 }

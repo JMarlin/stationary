@@ -6,6 +6,7 @@ EventDispatchProcedure g_event_proc = 0;
 
 int last_mouse_x = 0;
 int last_mouse_y = 0;
+int last_mouse_buttons = 0;
 
 void WS_InitEvents() {
 
@@ -19,16 +20,18 @@ void do_render_loop_proc() {
     g_render_proc();
 }
 
-void do_event_proc(int x, int y) {
+void do_event_proc(int x, int y, int buttons) {
 	last_mouse_x = x;
 	last_mouse_y = y;
+	last_mouse_buttons = buttons;
 	
 	g_event_proc();
 }
 
-void WS_GetMouse(int* x, int* y) {
+void WS_GetMouse(int* x, int* y, int* buttons) {
 	*x = last_mouse_x;
 	*y = last_mouse_y;
+	*buttons = last_mouse_buttons;
 }
 
 void WS_SetRenderLoopProc(RenderProcedure render_proc) {
@@ -144,7 +147,7 @@ WS_Display* WS_CreateDisplay(uint32_t w, uint32_t h) {
 		    y: e.offsetY * scale
 		};
 		
-		Module.do_event_proc(new_coords.x, new_coords.y);
+		Module.do_event_proc(new_coords.x, new_coords.y, e.buttons);
 	});
 
         new_canvas.style.cursor = 'none';

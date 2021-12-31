@@ -43,6 +43,6 @@ void WS_DestroyDisplay(WS_Display* display);
 void WS_BlitToDisplay(WS_Display* display, WS_ImgBuf* img_buf, WS_Rect* rectsrc, WS_Rect* rectdst);
 void WS_ClearDisplay(WS_Display* display);
 void WS_UpdateDisplay(WS_Display* display);
-void WS_GetMouse(int* x, int* y);
+void WS_GetMouse(int* x, int* y, int* buttons);
 
 #endif //WEBSHIM_H

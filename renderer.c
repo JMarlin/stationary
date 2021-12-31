@@ -56,6 +56,23 @@ void S_draw_tri(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint16_t x2,
     GPUwriteData((y2 << 16) | x2);
 }
 
+void S_draw_line(uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t r, uint8_t g, uint8_t b) {
+
+	//Line, one color
+	GPUwriteData(
+		(GPU_DATA_CMD(PRIM_LINE, 0) << 24) |
+		b << 16 |
+		g << 8 |
+		r 
+	);
+	    
+	//Vertex 1
+	GPUwriteData((y0 << 16) | x0);
+	
+ 	//Vertex 2
+    	GPUwriteData((y1 << 16) | x1);
+}
+
 void S_upload_image_data(uint32_t* src, uint16_t x, uint16_t y, uint16_t h, uint16_t w) {
 	
 	int pixel_count = (h * w) >> 1;

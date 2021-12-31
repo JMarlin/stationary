@@ -1257,7 +1257,7 @@ var ASM_CONSTS = {24204:function() {
   new_canvas.addEventListener("mousemove", function(e) {
     var scale = 320 / parseInt(new_canvas.style.width);
     var new_coords = {x:e.offsetX * scale, y:e.offsetY * scale};
-    Module.do_event_proc(new_coords.x, new_coords.y);
+    Module.do_event_proc(new_coords.x, new_coords.y, e.buttons);
   });
   new_canvas.style.cursor = "none";
   new_canvas.style.position = "absolute";
@@ -1266,12 +1266,12 @@ var ASM_CONSTS = {24204:function() {
   document.body.appendChild(new_canvas);
   Module.display_list.push({canvas:new_canvas, framebuf:new Uint8Array(320 * 240 * 4)});
   resizer(null);
-}, 25947:function() {
+}, 25958:function() {
   if (!!Module.render_interval) {
     clearInterval(Module.render_interval);
     Module.render_interval = null;
   }
-}, 26050:function($0, $1, $2, $3, $4, $5, $6) {
+}, 26061:function($0, $1, $2, $3, $4, $5, $6) {
   var display_id = $0;
   var display_w = $1;
   var display_h = $2;
